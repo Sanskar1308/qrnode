@@ -6,12 +6,58 @@ const tokenProvider = { secret: 'your-secret-key' }; // Replace with your actual
 
 const router = express.Router();
 
+// Insert Campaign
 router.post('/Insert', async (req, res) => {
-    try {
-        // Extract the data from the request body
-        const { campaignname, remark, active } = req.body;
+    // #swagger.tags = ['Campaign']
+    // #swagger.summary = 'Insert a new campaign'
+    // #swagger.description = 'Insert a new campaign into the database'
 
-        // Validate User ID from headers
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Campaign data',
+        required: true,
+        schema: {
+            campaignname: 'string' ,
+            remark: 'string' ,
+            active: 'boolean' 
+        }
+    } */
+
+    /* #swagger.responses[200] = {
+          description: 'Campaign created successfully',
+          schema: {
+              isresponse: true,
+              responsestatus: 'Success',
+              errorcode: null,
+              suberrorcode: 0,
+              errormsg: 'Campaign created successfully'
+          }
+    } */
+    
+    /* #swagger.responses[400] = {
+          description: 'Invalid User ID',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Invalid User ID',
+              errorcode: 'Invalid User ID',
+              suberrorcode: 400,
+              errormsg: 'Invalid User ID'
+          }
+    } */
+    
+    /* #swagger.responses[500] = {
+          description: 'Internal Server Error',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Error',
+              errorcode: 'ECC_576',
+              suberrorcode: 500,
+              errormsg: 'Internal Server Error'
+          }
+    } */
+
+    try {
+        const { campaignname, remark, active } = req.body;
         const UserId = parseInt(req.headers['user-id'], 10) || 1;
         if (UserId <= 0) {
             return res.status(400).json({
@@ -23,13 +69,12 @@ router.post('/Insert', async (req, res) => {
             });
         }
 
-        // Insert data into the campaign table using Prisma
         const insertResult = await prisma.campaigntbl.create({
             data: {
                 UserId,
                 CampaignName: campaignname || null,
                 Remark: remark || null,
-                Active: active !== undefined ? active : true, // Default to true if not provided
+                Active: active !== undefined ? active : true,
                 CreatedDate: new Date(),
                 CreatedIP: req.ip,
                 CreatedSource: "web",
@@ -37,7 +82,6 @@ router.post('/Insert', async (req, res) => {
             }
         });
 
-        // Return a success response with the required format
         return res.json({
             isresponse: true,
             responsestatus: 'Success',
@@ -46,9 +90,7 @@ router.post('/Insert', async (req, res) => {
             errormsg: 'Campaign created successfully'
         });
     } catch (error) {
-        // Log the error and return a 500 response with the required format
-        // AppLogger.error('ECC_576', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
-        console.log(error)
+        console.log(error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
@@ -57,9 +99,59 @@ router.post('/Insert', async (req, res) => {
             errormsg: 'Internal Server Error'
         });
     }
-    });
+});
 
-router.post('/Update', async(req, res) => {
+// Update Campaign
+router.post('/Update', async (req, res) => {
+    // #swagger.tags = ['Campaign']
+    // #swagger.summary = 'Update an existing campaign'
+    // #swagger.description = 'Update an existing campaign in the database'
+
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Campaign update data',
+        required: true,
+        schema: {
+            Id: 'integer' ,
+            campaignname: 'string' ,
+            remark: 'string' ,
+            active: 'boolean'
+        }
+    } */
+
+    /* #swagger.responses[200] = {
+          description: 'Campaign updated successfully',
+          schema: {
+              isresponse: true,
+              responsestatus: 'Success',
+              errorcode: null,
+              suberrorcode: 0,
+              errormsg: 'Campaign updated successfully'
+          }
+    } */
+    
+    /* #swagger.responses[400] = {
+          description: 'Invalid ID or User ID',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Invalid ID or User ID',
+              errorcode: 'Invalid ID or User ID',
+              suberrorcode: 400,
+              errormsg: 'Invalid ID or User ID'
+          }
+    } */
+    
+    /* #swagger.responses[500] = {
+          description: 'Internal Server Error',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Error',
+              errorcode: 'ECC_577',
+              suberrorcode: 500,
+              errormsg: 'Internal Server Error'
+          }
+    } */
+
     try {
         const { Id, campaignname, remark, active } = req.body;
         const UserId = parseInt(req.headers['user-id'], 10) || 1;
@@ -97,23 +189,14 @@ router.post('/Update', async(req, res) => {
             }
         });
 
-        // Convert BigInt fields to strings before sending the response
-        const resultWithStringBigInt = {
-            ...updateResult,
-            Id: updateResult.Id.toString(),
-            UserId: updateResult.UserId.toString()
-        };
-
         return res.json({
             isresponse: true,
             responsestatus: 'Success',
             errorcode: null,
             suberrorcode: 0,
-            errormsg: 'Campaign updated successfully',
-            data: resultWithStringBigInt
+            errormsg: 'Campaign updated successfully'
         });
     } catch (error) {
-        AppLogger.error('ECC_577', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
@@ -121,25 +204,71 @@ router.post('/Update', async(req, res) => {
             suberrorcode: 500,
             errormsg: 'Internal Server Error'
         });
-    }});
+    }
+});
 
-router.post('/Delete', async(req, res) => {
+// Delete Campaign
+router.post('/Delete', async (req, res) => {
+    // #swagger.tags = ['Campaign']
+    // #swagger.summary = 'Delete an existing campaign'
+    // #swagger.description = 'Delete an existing campaign from the database'
+
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Campaign ID to delete',
+        required: true,
+        schema: {
+            id: 'integer'
+        }
+    } */
+
+    /* #swagger.responses[200] = {
+          description: 'Campaign deleted successfully',
+          schema: {
+              isresponse: true,
+              responsestatus: 'Success',
+              errorcode: null,
+              suberrorcode: 0,
+              errormsg: 'Campaign deleted successfully'
+          }
+    } */
+    
+    /* #swagger.responses[400] = {
+          description: 'Invalid ID or User ID',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Invalid ID or User ID',
+              errorcode: 'Invalid ID or User ID',
+              suberrorcode: 400,
+              errormsg: 'Invalid ID or User ID'
+          }
+    } */
+    
+    /* #swagger.responses[500] = {
+          description: 'Internal Server Error',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Error',
+              errorcode: 'ECC_578',
+              suberrorcode: 500,
+              errormsg: 'Internal Server Error'
+          }
+    } */
+
     try {
         const { id } = req.body;
         const UserId = parseInt(req.headers['user-id'], 10) || 1;
 
-        // Validate UserId
         if (UserId <= 0) {
             return res.status(400).json({
                 isresponse: false,
                 responsestatus: 'Invalid User ID',
                 errorcode: 'Invalid User ID',
                 suberrorcode: 400,
-                errormsg: 'Invalid User ID' 
+                errormsg: 'Invalid User ID'
             });
         }
 
-        // Validate the campaign ID to be deleted
         if (id <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -150,24 +279,22 @@ router.post('/Delete', async(req, res) => {
             });
         }
 
-        const data = await prisma.campaigntbl.findUnique({where: {Id: BigInt(id)}})
+        const data = await prisma.campaigntbl.findUnique({ where: { Id: BigInt(id) } });
 
         if (!data) {
             return res.status(404).json({
                 isresponse: false,
-                responsestatus: 'Invalid ID',
-                errorcode: 'Invalid ID',
+                responsestatus: 'Not Found',
+                errorcode: 'NOT_FOUND',
                 suberrorcode: 404,
-                errormsg: 'Invalid ID'
+                errormsg: 'Campaign not found'
             });
         }
 
-        // Perform the delete operation using Prisma
         const deleteResult = await prisma.campaigntbl.delete({
             where: { Id: data.Id }
         });
 
-        // Return a success response
         return res.json({
             isresponse: true,
             responsestatus: 'Success',
@@ -176,8 +303,6 @@ router.post('/Delete', async(req, res) => {
             errormsg: 'Campaign deleted successfully'
         });
     } catch (error) {
-        // Log the error and return a 500 response
-        // AppLogger.error('ECC_578', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
@@ -188,12 +313,64 @@ router.post('/Delete', async(req, res) => {
     }
 });
 
+// Get Campaign
 router.post('/Get', async (req, res) => {
+    // #swagger.tags = ['Campaign']
+    // #swagger.summary = 'Get a campaign by ID'
+    // #swagger.description = 'Fetch campaign details using its ID'
+
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Campaign ID',
+        required: true,
+        schema: {
+            id: 'integer'
+        }
+    } */
+
+    /* #swagger.responses[200] = {
+          description: 'Campaign retrieved successfully',
+          schema: {
+              data: {
+                  id: 1,
+                  campaignname: 'Campaign name',
+                  remark: 'Remark',
+                  active: true
+              },
+              isresponse: true,
+              responsestatus: 'Success',
+              errorcode: null,
+              suberrorcode: 0,
+              errormsg: 'Campaign retrieved successfully'
+          }
+    } */
+    
+    /* #swagger.responses[400] = {
+          description: 'Invalid ID or User ID',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Invalid ID or User ID',
+              errorcode: 'Invalid ID or User ID',
+              suberrorcode: 400,
+              errormsg: 'Invalid ID or User ID'
+          }
+    } */
+    
+    /* #swagger.responses[500] = {
+          description: 'Internal Server Error',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Error',
+              errorcode: 'ECC_579',
+              suberrorcode: 500,
+              errormsg: 'Internal Server Error'
+          }
+    } */
+
     try {
         const { id } = req.body;
         const UserId = parseInt(req.headers['user-id'], 10) || 1;
 
-        // Validate UserId
         if (UserId <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -204,7 +381,6 @@ router.post('/Get', async (req, res) => {
             });
         }
 
-        // Validate campaign ID
         if (id <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -215,7 +391,6 @@ router.post('/Get', async (req, res) => {
             });
         }
 
-        // Fetch campaign using Prisma's findUnique or findFirst based on ID
         const campaign = await prisma.campaigntbl.findFirst({
             where: {
                 Id: BigInt(id),
@@ -223,7 +398,6 @@ router.post('/Get', async (req, res) => {
             }
         });
 
-        // If campaign not found
         if (!campaign) {
             return res.status(404).json({
                 isresponse: false,
@@ -234,7 +408,6 @@ router.post('/Get', async (req, res) => {
             });
         }
 
-        // Success response
         return res.json({
             data: campaign,
             isresponse: true,
@@ -244,8 +417,6 @@ router.post('/Get', async (req, res) => {
             errormsg: 'Campaign retrieved successfully'
         });
     } catch (error) {
-        // Log the error and return a 500 response
-        // AppLogger.error('ECC_579', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
@@ -256,12 +427,58 @@ router.post('/Get', async (req, res) => {
     }
 });
 
+// Update Status to Active
 router.post('/UpdateStatus/Active', async (req, res) => {
+    // #swagger.tags = ['Campaign']
+    // #swagger.summary = 'Update campaign status to Active'
+    // #swagger.description = 'Activate a campaign by updating its status to active'
+
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Campaign ID',
+        required: true,
+        schema: {
+            id: 'integer'
+        }
+    } */
+
+    /* #swagger.responses[200] = {
+          description: 'Campaign activated successfully',
+          schema: {
+              isresponse: true,
+              responsestatus: 'Success',
+              errorcode: null,
+              suberrorcode: 0,
+              errormsg: 'Campaign activated successfully'
+          }
+    } */
+    
+    /* #swagger.responses[400] = {
+          description: 'Invalid ID or User ID',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Invalid ID or User ID',
+              errorcode: 'Invalid ID or User ID',
+              suberrorcode: 400,
+              errormsg: 'Invalid ID or User ID'
+          }
+    } */
+    
+    /* #swagger.responses[500] = {
+          description: 'Internal Server Error',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Error',
+              errorcode: 'ECC_580',
+              suberrorcode: 500,
+              errormsg: 'Internal Server Error'
+          }
+    } */
+
     try {
         const { id } = req.body;
         const UserId = parseInt(req.headers['user-id'], 10) || 1;
 
-        // Validate UserId
         if (UserId <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -272,7 +489,6 @@ router.post('/UpdateStatus/Active', async (req, res) => {
             });
         }
 
-        // Validate campaign ID
         if (id <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -283,14 +499,13 @@ router.post('/UpdateStatus/Active', async (req, res) => {
             });
         }
 
-        // Update the Active status of the campaign
         const updateStatusResult = await prisma.campaigntbl.update({
             where: {
-                Id: BigInt(id), // Convert to BigInt if necessary
+                Id: BigInt(id),
                 UserId: BigInt(UserId)
             },
             data: {
-                Active: true, // Set the campaign to active
+                Active: true,
                 LastModifiedDate: new Date(),
                 LastModifiedIP: req.ip,
                 LastModifiedSource: 'web',
@@ -298,7 +513,6 @@ router.post('/UpdateStatus/Active', async (req, res) => {
             }
         });
 
-        // Success response
         return res.json({
             isresponse: true,
             responsestatus: 'Success',
@@ -307,8 +521,6 @@ router.post('/UpdateStatus/Active', async (req, res) => {
             errormsg: 'Campaign status updated successfully'
         });
     } catch (error) {
-        // Log the error and return a 500 response
-        // AppLogger.error('ECC_580', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
@@ -319,12 +531,58 @@ router.post('/UpdateStatus/Active', async (req, res) => {
     }
 });
 
+// Update Status to Inactive (Deactive)
 router.post('/UpdateStatus/Deactive', async (req, res) => {
+    // #swagger.tags = ['Campaign']
+    // #swagger.summary = 'Update campaign status to Inactive'
+    // #swagger.description = 'Deactivate a campaign by updating its status to inactive'
+
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Campaign ID',
+        required: true,
+        schema: {
+            id: 'integer'
+        }
+    } */
+
+    /* #swagger.responses[200] = {
+          description: 'Campaign deactivated successfully',
+          schema: {
+              isresponse: true,
+              responsestatus: 'Success',
+              errorcode: null,
+              suberrorcode: 0,
+              errormsg: 'Campaign deactivated successfully'
+          }
+    } */
+    
+    /* #swagger.responses[400] = {
+          description: 'Invalid ID or User ID',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Invalid ID or User ID',
+              errorcode: 'Invalid ID or User ID',
+              suberrorcode: 400,
+              errormsg: 'Invalid ID or User ID'
+          }
+    } */
+    
+    /* #swagger.responses[500] = {
+          description: 'Internal Server Error',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Error',
+              errorcode: 'ECC_581',
+              suberrorcode: 500,
+              errormsg: 'Internal Server Error'
+          }
+    } */
+
     try {
         const { id } = req.body;
         const UserId = parseInt(req.headers['user-id'], 10) || 1;
 
-        // Validate UserId
         if (UserId <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -335,7 +593,6 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
             });
         }
 
-        // Validate campaign ID
         if (id <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -346,14 +603,13 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
             });
         }
 
-        // Update the Active status of the campaign to false
         const updateStatusResult = await prisma.campaigntbl.update({
             where: {
-                Id: BigInt(id), // Convert to BigInt if necessary
+                Id: BigInt(id),
                 UserId: BigInt(UserId)
             },
             data: {
-                Active: false, // Set the campaign to inactive
+                Active: false,
                 LastModifiedDate: new Date(),
                 LastModifiedIP: req.ip,
                 LastModifiedSource: 'web',
@@ -361,17 +617,14 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
             }
         });
 
-        // Success response
         return res.json({
             isresponse: true,
             responsestatus: 'Success',
             errorcode: null,
             suberrorcode: 0,
-            errormsg: 'Campaign status updated to inactive successfully'
+            errormsg: 'Campaign deactivated successfully'
         });
     } catch (error) {
-        // Log the error and return a 500 response
-        // AppLogger.error('ECC_581', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
@@ -383,10 +636,68 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
 });
 
 router.get('/GetDistinct/:by', async (req, res) => {
+    // #swagger.tags = ['Campaign']
+    // #swagger.summary = 'Get distinct campaign names'
+    // #swagger.description = 'Fetch distinct campaign names or status (active/inactive)'
+
+    /* #swagger.parameters['by'] = {
+        in: 'path',
+        description: "Enter a value from the list: campaignname, campaignname_active, campaignname_deactive",
+        required: true,
+        type: 'string'
+    } */
+
+    /* #swagger.parameters['user-id'] = {
+        in: 'header',
+        description: 'Enter login UserId',
+        required: true,
+        type: 'string'
+    } */
+
+    /* #swagger.parameters['X-Authorization'] = {
+        in: 'header',
+        description: 'Enter login token',
+        required: true,
+        type: 'string'
+    } */
+
+    /* #swagger.responses[200] = {
+          description: 'Distinct campaign data retrieved successfully',
+          schema: {
+              data: [{ CampaignName: 'string' }],
+              isresponse: true,
+              responsestatus: 'Success',
+              errorcode: null,
+              suberrorcode: 0,
+              errormsg: 'Distinct campaign data retrieved successfully'
+          }
+    } */
+    
+    /* #swagger.responses[400] = {
+          description: 'Invalid parameter or User ID',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Invalid parameter or User ID',
+              errorcode: 'Invalid parameter or User ID',
+              suberrorcode: 400,
+              errormsg: 'Invalid parameter or User ID'
+          }
+    } */
+    
+    /* #swagger.responses[500] = {
+          description: 'Internal Server Error',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Error',
+              errorcode: 'ECC_583',
+              suberrorcode: 500,
+              errormsg: 'Internal Server Error'
+          }
+    } */
+
     try {
         const { by } = req.params;
 
-        // Validate the 'by' parameter
         if (!['campaignname', 'campaignname_active', 'campaignname_deactive'].includes(by)) {
             return res.status(400).json({
                 isresponse: false,
@@ -399,7 +710,6 @@ router.get('/GetDistinct/:by', async (req, res) => {
 
         const userId = parseInt(req.headers['user-id'], 10) || 1;
 
-        // Validate UserId
         if (userId <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -410,7 +720,6 @@ router.get('/GetDistinct/:by', async (req, res) => {
             });
         }
 
-        // Define the Prisma query based on the 'by' parameter
         let filter = {};
         if (by === 'campaignname_active') {
             filter = { Active: true };
@@ -418,19 +727,17 @@ router.get('/GetDistinct/:by', async (req, res) => {
             filter = { Active: false };
         }
 
-        // Fetch distinct values from the database using Prisma
         const result = await prisma.campaigntbl.findMany({
             where: {
-                UserId: BigInt(userId), // Ensure UserId matches
+                UserId: BigInt(userId),
                 ...filter
             },
-            distinct: ['CampaignName'], // Fetch distinct campaign names
+            distinct: ['CampaignName'],
             select: {
-                CampaignName: true // Only return distinct campaign names
+                CampaignName: true
             }
         });
 
-        // Success response
         return res.json({
             data: result,
             isresponse: true,
@@ -440,8 +747,6 @@ router.get('/GetDistinct/:by', async (req, res) => {
             errormsg: 'Distinct campaign data retrieved successfully'
         });
     } catch (error) {
-        // Log the error and return a 500 response
-        // AppLogger.error('ECC_583', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
@@ -452,12 +757,64 @@ router.get('/GetDistinct/:by', async (req, res) => {
     }
 });
 
-router.post('/Search',  async (req, res) => {
+// Search Campaigns
+router.post('/Search', async (req, res) => {
+    // #swagger.tags = ['Campaign']
+    // #swagger.summary = 'Search campaigns'
+    // #swagger.description = 'Search campaigns by various filters'
+
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Search filters',
+        required: true,
+        schema: {
+            createdip: 'string' ,
+            remark: 'string' ,
+            actived: 'boolean' ,
+            campaignname: 'string' ,
+            pagesize: 'integer' ,
+            currentpage: 'integer'
+        }
+    } */
+
+    /* #swagger.responses[200] = {
+          description: 'Search results fetched successfully',
+          schema: {
+              data: [{ id: 1, campaignname: 'string', active: true }],
+              isresponse: true,
+              responsestatus: 'Success',
+              errorcode: null,
+              suberrorcode: 0,
+              errormsg: 'Search results fetched successfully'
+          }
+    } */
+    
+    /* #swagger.responses[400] = {
+          description: 'Invalid User ID',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Invalid User ID',
+              errorcode: 'Invalid User ID',
+              suberrorcode: 400,
+              errormsg: 'Invalid User ID'
+          }
+    } */
+    
+    /* #swagger.responses[500] = {
+          description: 'Internal Server Error',
+          schema: {
+              isresponse: false,
+              responsestatus: 'Error',
+              errorcode: 'ECC_584',
+              suberrorcode: 500,
+              errormsg: 'Internal Server Error'
+          }
+    } */
+
     try {
         const model = req.body;
         const UserId = parseInt(req.headers['user-id'], 10) || 1;
 
-        // Validate UserId
         if (UserId <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -468,37 +825,31 @@ router.post('/Search',  async (req, res) => {
             });
         }
 
-        // Construct filter conditions based on the request body
         const filters = {
-            UserId: BigInt(UserId), // Ensure UserId is matched
+            UserId: BigInt(UserId),
             Remark: model.remark ? { contains: model.remark } : undefined,
             CampaignName: model.campaignname ? { contains: model.campaignname } : undefined,
             CreatedIP: model.createdip ? { contains: model.createdip } : undefined,
-            Active: model.active !== undefined ? model.active : undefined,
-            // You can add more filters based on other fields in the model (e.g., dates)
+            Active: model.active !== undefined ? model.active : undefined
         };
 
-        // Pagination settings
         const pageSize = model.pagesize || 10;
         const currentPage = model.currentpage || 0;
         const skip = currentPage * pageSize;
 
-        // Fetch data using Prisma
         const result = await prisma.campaigntbl.findMany({
             where: filters,
             skip: skip,
             take: pageSize,
             orderBy: {
-                Id: 'desc', // You can change this to sort by another field
+                Id: 'desc',
             }
         });
 
-        // Get total count for pagination
         const totalCount = await prisma.campaigntbl.count({
             where: filters
         });
 
-        // Return the paginated result
         return res.json({
             data: result,
             totalRecords: totalCount,
@@ -509,8 +860,6 @@ router.post('/Search',  async (req, res) => {
             errormsg: 'Search results fetched successfully'
         });
     } catch (error) {
-        // Log the error and return a 500 response
-        AppLogger.error('ECC_584', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
@@ -520,6 +869,5 @@ router.post('/Search',  async (req, res) => {
         });
     }
 });
-
 
 module.exports = router;

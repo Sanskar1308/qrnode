@@ -1,0 +1,1457 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Campaign API",
+    "description": "API documentation for Campaign Operations",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/api/UserOperation/Register": {
+      "post": {
+        "tags": [
+          "UserOperation"
+        ],
+        "summary": "Register a new user",
+        "description": "This API registers a new user with a username and password.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User registration data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User registered successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "User Registered"
+                },
+                "ErrorCode": {},
+                "ErrorMsg": {},
+                "SubErrorCode": {}
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_6"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_6"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/UserOperation/VerifyCredential": {
+      "post": {
+        "tags": [
+          "UserOperation"
+        ],
+        "summary": "Verify user credentials and log in",
+        "description": "This API verifies the username and password and returns a token if successful.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User login data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "JWT_TOKEN_HERE"
+                },
+                "userid": {
+                  "type": "number",
+                  "example": 1
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "SUCCESS"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "UR"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 200
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "success"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": ""
+                },
+                "userid": {
+                  "type": "number",
+                  "example": -1
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "FAIL"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "UR"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 60
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "User credentials do not match. Please ensure that you enter the correct information."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": ""
+                },
+                "userid": {
+                  "type": "number",
+                  "example": -1
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "FAIL"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_5"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/Insert": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "CreatedBy": {
+                  "example": "any"
+                },
+                "Ip": {
+                  "example": "any"
+                },
+                "Source": {
+                  "example": "any"
+                },
+                "UserId": {
+                  "example": "any"
+                },
+                "posname": {
+                  "example": "any"
+                },
+                "active": {
+                  "example": "any"
+                },
+                "remark": {
+                  "example": "any"
+                },
+                "merchantid": {
+                  "example": "any"
+                },
+                "key": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/POSOperation/Update": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ModifiedBy": {
+                  "example": "any"
+                },
+                "Ip": {
+                  "example": "any"
+                },
+                "Source": {
+                  "example": "any"
+                },
+                "UserId": {
+                  "example": "any"
+                },
+                "id": {
+                  "example": "any"
+                },
+                "posname": {
+                  "example": "any"
+                },
+                "merchantid": {
+                  "example": "any"
+                },
+                "key": {
+                  "example": "any"
+                },
+                "remark": {
+                  "example": "any"
+                },
+                "active": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Insert": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Insert a new campaign",
+        "description": "Insert a new campaign into the database",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "campaignname": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "active": {
+                  "type": "string",
+                  "example": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign created successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign created successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_576"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Update": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Update an existing campaign",
+        "description": "Update an existing campaign in the database",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign update data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "campaignname": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "active": {
+                  "type": "string",
+                  "example": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign updated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign updated successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_577"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Delete": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Delete an existing campaign",
+        "description": "Delete an existing campaign from the database",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign ID to delete",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign deleted successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign deleted successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_578"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Get": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Get a campaign by ID",
+        "description": "Fetch campaign details using its ID",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign ID",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "campaignname": {
+                      "type": "string",
+                      "example": "Campaign name"
+                    },
+                    "remark": {
+                      "type": "string",
+                      "example": "Remark"
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign retrieved successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_579"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/UpdateStatus/Active": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Update campaign status to Active",
+        "description": "Activate a campaign by updating its status to active",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign ID",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign activated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign activated successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_580"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/UpdateStatus/Deactive": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Update campaign status to Inactive",
+        "description": "Deactivate a campaign by updating its status to inactive",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign ID",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign deactivated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign deactivated successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_581"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/GetDistinct/{by}": {
+      "get": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Get distinct campaign names",
+        "description": "Fetch distinct campaign names or status (active/inactive)",
+        "parameters": [
+          {
+            "name": "by",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Enter a value from the list: campaignname, campaignname_active, campaignname_deactive"
+          },
+          {
+            "name": "user-id",
+            "in": "header",
+            "description": "Enter login UserId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Authorization",
+            "in": "header",
+            "description": "Enter login token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Distinct campaign data retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "CampaignName": {
+                        "type": "string",
+                        "example": "string"
+                      }
+                    }
+                  }
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Distinct campaign data retrieved successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid parameter or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid parameter or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid parameter or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_583"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Search": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Search campaigns",
+        "description": "Search campaigns by various filters",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Search filters",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "createdip": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "actived": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "campaignname": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "pagesize": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "currentpage": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results fetched successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "campaignname": {
+                        "type": "string",
+                        "example": "string"
+                      },
+                      "active": {
+                        "type": "boolean",
+                        "example": true
+                      }
+                    }
+                  }
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Search results fetched successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_584"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

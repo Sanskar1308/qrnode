@@ -9,6 +9,43 @@ const router = express.Router();
 
 // Register API
 router.post('/Register', async (req, res) => {
+    // #swagger.tags = ['UserOperation']
+    // #swagger.summary = 'Register a new user'
+    // #swagger.description = 'This API registers a new user with a username and password.'
+
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'User registration data',
+        required: true,
+        schema: {
+            
+                username: 'string',
+                password: 'string'
+            },
+        
+    } */
+
+    /* #swagger.responses[200] = {
+        description: 'User registered successfully',
+        schema: {
+            IsResponse: true,
+            ResponseStatus: 'User Registered',
+            ErrorCode: null,
+            ErrorMsg: null,
+            SubErrorCode: null
+        }
+    } */
+
+    /* #swagger.responses[500] = {
+        description: 'Internal Server Error',
+        schema: {
+            IsResponse: false,
+            ResponseStatus: 'Error',
+            ErrorCode: 'ECC_6',
+            ErrorMsg: 'Internal Server Error',
+            SubErrorCode: 'ECC_6'
+        }
+    } */
     try {
         const { username, password } = req.body;
         const hashedPassword = bcrypt.hashSync(password, 10);
@@ -27,7 +64,6 @@ router.post('/Register', async (req, res) => {
             SubErrorCode: null
         });
     } catch (error) {
-        // AppLogger.error('ECC_6', 'Error message', 'userController.js', 'UserOperation', 'Register', 'POST', error);
         res.status(500).json({
             IsResponse: false,
             ResponseStatus: 'Error',
@@ -40,6 +76,60 @@ router.post('/Register', async (req, res) => {
 
 // Login API
 router.post('/VerifyCredential', async (req, res) => {
+    // #swagger.tags = ['UserOperation']
+    // #swagger.summary = 'Verify user credentials and log in'
+    // #swagger.description = 'This API verifies the username and password and returns a token if successful.'
+
+    /* #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'User login data',
+        required: true,
+        schema: {
+            
+                username: 'string',
+                password: 'string'
+            
+        }
+    } */
+
+    /* #swagger.responses[200] = {
+        description: 'User logged in successfully',
+        schema: {
+            token: 'JWT_TOKEN_HERE',
+            userid: 1,
+            isresponse: true,
+            responsestatus: 'SUCCESS',
+            errorcode: 'UR',
+            suberrorcode: 200,
+            errormsg: 'success'
+        }
+    } */
+
+    /* #swagger.responses[401] = {
+        description: 'Invalid credentials',
+        schema: {
+            token: "",
+            userid: -1,
+            isresponse: false,
+            responsestatus: 'FAIL',
+            errorcode: 'UR',
+            suberrorcode: 60,
+            errormsg: 'User credentials do not match. Please ensure that you enter the correct information.'
+        }
+    } */
+
+    /* #swagger.responses[500] = {
+        description: 'Internal Server Error',
+        schema: {
+            token: "",
+            userid: -1,
+            isresponse: false,
+            responsestatus: 'FAIL',
+            errorcode: 'ECC_5',
+            suberrorcode: 500,
+            errormsg: 'Internal Server Error'
+        }
+    } */
     try {
         const { username, password } = req.body;
         const user = await prisma.user.findUnique({
@@ -71,7 +161,6 @@ router.post('/VerifyCredential', async (req, res) => {
             errormsg: "success"
         });
     } catch (error) {
-        // AppLogger.error('ECC_5', 'Error message', 'userController.js', 'UserOperation', 'VerifyCredential', 'POST', error);
         return res.status(500).json({
             token: "",
             userid: -1,
@@ -83,5 +172,6 @@ router.post('/VerifyCredential', async (req, res) => {
         });
     }
 });
+
 
 module.exports = router;
