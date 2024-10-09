@@ -382,5 +382,144 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
     }
 });
 
+router.get('/GetDistinct/:by', async (req, res) => {
+    try {
+        const { by } = req.params;
+
+        // Validate the 'by' parameter
+        if (!['campaignname', 'campaignname_active', 'campaignname_deactive'].includes(by)) {
+            return res.status(400).json({
+                isresponse: false,
+                responsestatus: 'Invalid parameter',
+                errorcode: 'Invalid parameter',
+                suberrorcode: 400,
+                errormsg: 'Invalid parameter value'
+            });
+        }
+
+        const userId = parseInt(req.headers['user-id'], 10) || 1;
+
+        // Validate UserId
+        if (userId <= 0) {
+            return res.status(400).json({
+                isresponse: false,
+                responsestatus: 'Invalid User ID',
+                errorcode: 'Invalid User ID',
+                suberrorcode: 400,
+                errormsg: 'Invalid User ID'
+            });
+        }
+
+        // Define the Prisma query based on the 'by' parameter
+        let filter = {};
+        if (by === 'campaignname_active') {
+            filter = { Active: true };
+        } else if (by === 'campaignname_deactive') {
+            filter = { Active: false };
+        }
+
+        // Fetch distinct values from the database using Prisma
+        const result = await prisma.campaigntbl.findMany({
+            where: {
+                UserId: BigInt(userId), // Ensure UserId matches
+                ...filter
+            },
+            distinct: ['CampaignName'], // Fetch distinct campaign names
+            select: {
+                CampaignName: true // Only return distinct campaign names
+            }
+        });
+
+        // Success response
+        return res.json({
+            data: result,
+            isresponse: true,
+            responsestatus: 'Success',
+            errorcode: null,
+            suberrorcode: 0,
+            errormsg: 'Distinct campaign data retrieved successfully'
+        });
+    } catch (error) {
+        // Log the error and return a 500 response
+        // AppLogger.error('ECC_583', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
+        return res.status(500).json({
+            isresponse: false,
+            responsestatus: 'Error',
+            errorcode: 'ECC_583',
+            suberrorcode: 500,
+            errormsg: 'Internal Server Error'
+        });
+    }
+});
+
+router.post('/Search',  async (req, res) => {
+    try {
+        const model = req.body;
+        const UserId = parseInt(req.headers['user-id'], 10) || 1;
+
+        // Validate UserId
+        if (UserId <= 0) {
+            return res.status(400).json({
+                isresponse: false,
+                responsestatus: 'Invalid User ID',
+                errorcode: 'Invalid User ID',
+                suberrorcode: 400,
+                errormsg: 'Invalid User ID'
+            });
+        }
+
+        // Construct filter conditions based on the request body
+        const filters = {
+            UserId: BigInt(UserId), // Ensure UserId is matched
+            Remark: model.remark ? { contains: model.remark } : undefined,
+            CampaignName: model.campaignname ? { contains: model.campaignname } : undefined,
+            CreatedIP: model.createdip ? { contains: model.createdip } : undefined,
+            Active: model.active !== undefined ? model.active : undefined,
+            // You can add more filters based on other fields in the model (e.g., dates)
+        };
+
+        // Pagination settings
+        const pageSize = model.pagesize || 10;
+        const currentPage = model.currentpage || 0;
+        const skip = currentPage * pageSize;
+
+        // Fetch data using Prisma
+        const result = await prisma.campaigntbl.findMany({
+            where: filters,
+            skip: skip,
+            take: pageSize,
+            orderBy: {
+                Id: 'desc', // You can change this to sort by another field
+            }
+        });
+
+        // Get total count for pagination
+        const totalCount = await prisma.campaigntbl.count({
+            where: filters
+        });
+
+        // Return the paginated result
+        return res.json({
+            data: result,
+            totalRecords: totalCount,
+            isresponse: true,
+            responsestatus: 'Success',
+            errorcode: null,
+            suberrorcode: 0,
+            errormsg: 'Search results fetched successfully'
+        });
+    } catch (error) {
+        // Log the error and return a 500 response
+        AppLogger.error('ECC_584', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
+        return res.status(500).json({
+            isresponse: false,
+            responsestatus: 'Error',
+            errorcode: 'ECC_584',
+            suberrorcode: 500,
+            errormsg: 'Internal Server Error'
+        });
+    }
+});
+
 
 module.exports = router;
