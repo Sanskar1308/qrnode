@@ -15,7 +15,7 @@ router.post('/Insert', async (req, res) => {
         model.Ip = req.ip;
         model.Source = "web";
         
-        // Extract UserId from the request headers
+        // Extract UserId from the request heade
         model.UserId = parseInt(req.headers['user-id'], 10);
 
         // Validate UserId
