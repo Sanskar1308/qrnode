@@ -308,11 +308,74 @@ router.post('/UpdateStatus/Active', async (req, res) => {
         });
     } catch (error) {
         // Log the error and return a 500 response
-        AppLogger.error('ECC_580', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
+        // AppLogger.error('ECC_580', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
             errorcode: 'ECC_580',
+            suberrorcode: 500,
+            errormsg: 'Internal Server Error'
+        });
+    }
+});
+
+router.post('/UpdateStatus/Deactive', async (req, res) => {
+    try {
+        const { id } = req.body;
+        const UserId = parseInt(req.headers['user-id'], 10) || 1;
+
+        // Validate UserId
+        if (UserId <= 0) {
+            return res.status(400).json({
+                isresponse: false,
+                responsestatus: 'Invalid User ID',
+                errorcode: 'Invalid User ID',
+                suberrorcode: 400,
+                errormsg: 'Invalid User ID'
+            });
+        }
+
+        // Validate campaign ID
+        if (id <= 0) {
+            return res.status(400).json({
+                isresponse: false,
+                responsestatus: 'Invalid ID',
+                errorcode: 'Invalid ID',
+                suberrorcode: 400,
+                errormsg: 'Invalid campaign ID'
+            });
+        }
+
+        // Update the Active status of the campaign to false
+        const updateStatusResult = await prisma.campaigntbl.update({
+            where: {
+                Id: BigInt(id), // Convert to BigInt if necessary
+                UserId: BigInt(UserId)
+            },
+            data: {
+                Active: false, // Set the campaign to inactive
+                LastModifiedDate: new Date(),
+                LastModifiedIP: req.ip,
+                LastModifiedSource: 'web',
+                LastModifiedBy: 'User'
+            }
+        });
+
+        // Success response
+        return res.json({
+            isresponse: true,
+            responsestatus: 'Success',
+            errorcode: null,
+            suberrorcode: 0,
+            errormsg: 'Campaign status updated to inactive successfully'
+        });
+    } catch (error) {
+        // Log the error and return a 500 response
+        // AppLogger.error('ECC_581', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
+        return res.status(500).json({
+            isresponse: false,
+            responsestatus: 'Error',
+            errorcode: 'ECC_581',
             suberrorcode: 500,
             errormsg: 'Internal Server Error'
         });
