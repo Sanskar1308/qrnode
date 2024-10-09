@@ -6,8 +6,6 @@ const tokenProvider = { secret: 'your-secret-key' }; // Replace with your actual
 
 const router = express.Router();
 
-
-
 router.post('/Insert', async (req, res) => {
     try {
         // Extract the data from the request body
@@ -123,7 +121,7 @@ router.post('/Update', async(req, res) => {
             suberrorcode: 500,
             errormsg: 'Internal Server Error'
         });
-    }})
+    }});
 
 router.post('/Delete', async(req, res) => {
     try {
@@ -188,6 +186,75 @@ router.post('/Delete', async(req, res) => {
             errormsg: 'Internal Server Error'
         });
     }
-})
+});
+
+router.post('/Get', async (req, res) => {
+    try {
+        const { id } = req.body;
+        const UserId = parseInt(req.headers['user-id'], 10) || 1;
+
+        // Validate UserId
+        if (UserId <= 0) {
+            return res.status(400).json({
+                isresponse: false,
+                responsestatus: 'Invalid User ID',
+                errorcode: 'Invalid User ID',
+                suberrorcode: 400,
+                errormsg: 'Invalid User ID'
+            });
+        }
+
+        // Validate campaign ID
+        if (id <= 0) {
+            return res.status(400).json({
+                isresponse: false,
+                responsestatus: 'Invalid ID',
+                errorcode: 'Invalid ID',
+                suberrorcode: 400,
+                errormsg: 'Invalid campaign ID'
+            });
+        }
+
+        // Fetch campaign using Prisma's findUnique or findFirst based on ID
+        const campaign = await prisma.campaigntbl.findFirst({
+            where: {
+                Id: BigInt(id),
+                UserId: BigInt(UserId)
+            }
+        });
+
+        // If campaign not found
+        if (!campaign) {
+            return res.status(404).json({
+                isresponse: false,
+                responsestatus: 'Not Found',
+                errorcode: 'NOT_FOUND',
+                suberrorcode: 404,
+                errormsg: 'Campaign not found'
+            });
+        }
+
+        // Success response
+        return res.json({
+            data: campaign,
+            isresponse: true,
+            responsestatus: 'Success',
+            errorcode: null,
+            suberrorcode: 0,
+            errormsg: 'Campaign retrieved successfully'
+        });
+    } catch (error) {
+        // Log the error and return a 500 response
+        // AppLogger.error('ECC_579', 'Error message', 'fullPath', 'namespace', 'className', 'methodName', error);
+        return res.status(500).json({
+            isresponse: false,
+            responsestatus: 'Error',
+            errorcode: 'ECC_579',
+            suberrorcode: 500,
+            errormsg: 'Internal Server Error'
+        });
+    }
+});
+
 
 module.exports = router;
