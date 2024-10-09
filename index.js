@@ -8,6 +8,7 @@ require('dotenv').config();
 const userController = require('./src/Controller/userController');
 const POSOperationConrtroller = require('./src/Controller/POSOperationController');
 const campaignController = require('./src/Controller/campaignController');
+const DashboardController = require('./src/Controller/DashboardController');
 
 // Middleware
 app.use(bodyParser.json());
@@ -17,6 +18,7 @@ app.use(cors({ origin: '*' })); // Allow all origins for testing purposes
 app.use('/api/UserOperation', userController);
 app.use('/api/POSOperation', POSOperationConrtroller);
 app.use('/api/CampaignOperation', campaignController);
+app.use('/api/Dashboard', DashboardController )
 
 // Start the server and check the Prisma client connection
 const startApp = async () => {
