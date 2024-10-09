@@ -11,6 +11,7 @@ const swaggerDocument = require('./swagger-output.json');
 const userController = require('./src/Controller/userController');
 const POSOperationConrtroller = require('./src/Controller/POSOperationController');
 const campaignController = require('./src/Controller/campaignController');
+const DashboardController = require('./src/Controller/DashboardController');
 
 // Middleware
 app.use(bodyParser.json());
@@ -46,6 +47,7 @@ app.use('/api-docs1', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/UserOperation', userController);
 app.use('/api/POSOperation', POSOperationConrtroller);
 app.use('/api/CampaignOperation', campaignController);
+app.use('/api/Dashboard', DashboardController )
 
 // Start the server and check the Prisma client connection
 const startApp = async () => {
