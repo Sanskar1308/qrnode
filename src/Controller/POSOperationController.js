@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenProvider = { secret: 'your-secret-key' };
 const router = express.Router();
+const authmiddleware = require('../middleware/auth');
 
 BigInt.prototype.toJSON = function() {
     return this.toString();
@@ -218,7 +219,7 @@ router.post('/Delete', async (req, res) => {
     }
 });
 
-router.post('/UpdateStatus/Active', async (req, res) => {
+router.post('/UpdateStatus/Active', authmiddleware , async (req, res) => {
     try {
         const model = req.body;
         model.ModifiedBy = "User";
@@ -305,7 +306,7 @@ router.post('/UpdateStatus/Active', async (req, res) => {
     }
 });
 
-router.post('/UpdateStatus/Deactive', async (req, res) => {
+router.post('/UpdateStatus/Deactive', authmiddleware, async (req, res) => {
     try {
         const model = req.body;
         model.ModifiedBy = "User";
@@ -369,7 +370,7 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
         });
 
         // Return the updated record
-        res.json({
+        return res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
             ErrorCode: null,
@@ -377,12 +378,13 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
             SubErrorCode: null,
             Data: updateStatusResult
         });
+
     } catch (error) {
         // Log the error for debugging purposes
         console.error('Error deactivating POS status:', error);
 
         // Respond with a standardized error message
-        res.status(500).json({
+        return res.status(500).json({
             IsResponse: false,
             ResponseStatus: 'Error',
             ErrorCode: 'ECC_68',
@@ -391,6 +393,7 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
         });
     }
 });
+
 
 router.post('/Get', async (req, res) => {
     try {

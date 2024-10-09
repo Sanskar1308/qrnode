@@ -2,8 +2,7 @@ const express = require('express');
 const prisma = require('../../prisma/client');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-// const AppLogger = require('./logger'); // assuming logger is in a separate file
-const tokenProvider = { secret: 'your-secret-key' }; // Replace with your actual secret
+require('dotenv').config();
 
 const router = express.Router();
 
@@ -27,7 +26,6 @@ router.post('/Register', async (req, res) => {
             SubErrorCode: null
         });
     } catch (error) {
-        // AppLogger.error('ECC_6', 'Error message', 'userController.js', 'UserOperation', 'Register', 'POST', error);
         res.status(500).json({
             IsResponse: false,
             ResponseStatus: 'Error',
@@ -58,7 +56,8 @@ router.post('/VerifyCredential', async (req, res) => {
             });
         }
 
-        const token = jwt.sign({ userId: user.id }, tokenProvider.secret, { expiresIn: '1d' });
+        // JWT_SECRET is fetched from the environment variables
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         res.setHeader('x-authorization', token);
 
         return res.json({
@@ -71,7 +70,6 @@ router.post('/VerifyCredential', async (req, res) => {
             errormsg: "success"
         });
     } catch (error) {
-        // AppLogger.error('ECC_5', 'Error message', 'userController.js', 'UserOperation', 'VerifyCredential', 'POST', error);
         return res.status(500).json({
             token: "",
             userid: -1,
