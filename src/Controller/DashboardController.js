@@ -6,6 +6,41 @@ const tokenProvider = { secret: 'your-secret-key' };
 const router = express.Router();
 
 router.get('/TotalDevice', async (req, res) => {
+    // #swagger.tags = ['Device']
+    // #swagger.summary = 'Fetch total number of devices'
+    // #swagger.description = 'Returns the total number of devices for a specific user, split into connected and disconnected.'
+
+    /* #swagger.parameters['UserId'] = {
+        in: 'header',
+        description: 'User ID for the request',
+        required: true,
+        type: 'integer'
+    } */
+
+    /* #swagger.responses[200] = {
+        description: 'Successfully retrieved total devices',
+        schema: {
+            Connected: { type: 'integer' },
+            DisConnected: { type: 'integer' },
+            Total: { type: 'integer' },
+            IsResponse: { type: 'boolean' },
+            ResponseStatus: { type: 'string' },
+            ErrorCode: { type: 'string' },
+            ErrorMsg: { type: 'string' },
+            SubErrorCode: { type: 'string' }
+        }
+    } */
+
+    /* #swagger.responses[500] = {
+        description: 'Internal Server Error',
+        schema: {
+            IsResponse: { type: 'boolean' },
+            ResponseStatus: { type: 'string' },
+            ErrorCode: { type: 'string' },
+            ErrorMsg: { type: 'string' },
+            SubErrorCode: { type: 'string' }
+        }
+    } */
     try {
         const userId = parseInt(req.headers['userid'] || req.headers['UserId'], 10);
 
@@ -72,6 +107,50 @@ router.get('/TotalDevice', async (req, res) => {
 });
 
 router.get('/ConnectedList', async (req, res) => {
+    // #swagger.tags = ['Device']
+    // #swagger.summary = 'Fetch list of connected devices'
+    // #swagger.description = 'Returns a list of connected devices for a specific user.'
+
+    /* #swagger.parameters['UserId'] = {
+        in: 'header',
+        description: 'User ID for the request',
+        required: true,
+        type: 'integer'
+    } */
+
+    /* #swagger.responses[200] = {
+        description: 'Successfully retrieved connected devices',
+        schema: {
+            List: { type: 'array', items: { type: 'object' } },
+            IsResponse: { type: 'boolean' },
+            ResponseStatus: { type: 'string' },
+            ErrorCode: { type: 'string' },
+            ErrorMsg: { type: 'string' },
+            SubErrorCode: { type: 'string' }
+        }
+    } */
+
+    /* #swagger.responses[404] = {
+        description: 'No connected devices found',
+        schema: {
+            IsResponse: { type: 'boolean' },
+            ResponseStatus: { type: 'string' },
+            ErrorCode: { type: 'string' },
+            ErrorMsg: { type: 'string' },
+            SubErrorCode: { type: 'string' }
+        }
+    } */
+
+    /* #swagger.responses[500] = {
+        description: 'Internal Server Error',
+        schema: {
+            IsResponse: { type: 'boolean' },
+            ResponseStatus: { type: 'string' },
+            ErrorCode: { type: 'string' },
+            ErrorMsg: { type: 'string' },
+            SubErrorCode: { type: 'string' }
+        }
+    } */
     try {
         // Extract and validate userId
         const userId = parseInt(req.headers['userid'] || req.headers['UserId'], 10);
@@ -129,6 +208,50 @@ router.get('/ConnectedList', async (req, res) => {
 });
 
 router.get('/DisconnectedList', async (req, res) => {
+    // #swagger.tags = ['Device']
+    // #swagger.summary = 'Fetch list of disconnected devices'
+    // #swagger.description = 'Returns a list of disconnected devices for a specific user.'
+
+    /* #swagger.parameters['UserId'] = {
+        in: 'header',
+        description: 'User ID for the request',
+        required: true,
+        type: 'integer'
+    } */
+
+    /* #swagger.responses[200] = {
+        description: 'Successfully retrieved disconnected devices',
+        schema: {
+            List: { type: 'array', items: { type: 'object' } },
+            IsResponse: { type: 'boolean' },
+            ResponseStatus: { type: 'string' },
+            ErrorCode: { type: 'string' },
+            ErrorMsg: { type: 'string' },
+            SubErrorCode: { type: 'string' }
+        }
+    } */
+
+    /* #swagger.responses[404] = {
+        description: 'No disconnected devices found',
+        schema: {
+            IsResponse: { type: 'boolean' },
+            ResponseStatus: { type: 'string' },
+            ErrorCode: { type: 'string' },
+            ErrorMsg: { type: 'string' },
+            SubErrorCode: { type: 'string' }
+        }
+    } */
+
+    /* #swagger.responses[500] = {
+        description: 'Internal Server Error',
+        schema: {
+            IsResponse: { type: 'boolean' },
+            ResponseStatus: { type: 'string' },
+            ErrorCode: { type: 'string' },
+            ErrorMsg: { type: 'string' },
+            SubErrorCode: { type: 'string' }
+        }
+    } */
     try {
         // Extract and validate userId from headers
         const userId = parseInt(req.headers['userid'] || req.headers['UserId'], 10);

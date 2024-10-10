@@ -1,0 +1,2992 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Campaign API",
+    "description": "API documentation for Campaign Operations",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/api/UserOperation/Register": {
+      "post": {
+        "tags": [
+          "UserOperation"
+        ],
+        "summary": "Register a new user",
+        "description": "This API registers a new user with a username and password.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User registration data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User registered successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "User Registered"
+                },
+                "ErrorCode": {},
+                "ErrorMsg": {},
+                "SubErrorCode": {}
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_6"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_6"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/UserOperation/VerifyCredential": {
+      "post": {
+        "tags": [
+          "UserOperation"
+        ],
+        "summary": "Verify user credentials and log in",
+        "description": "This API verifies the username and password and returns a token if successful.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User login data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "JWT_TOKEN_HERE"
+                },
+                "userid": {
+                  "type": "number",
+                  "example": 1
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "SUCCESS"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "UR"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 200
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "success"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": ""
+                },
+                "userid": {
+                  "type": "number",
+                  "example": -1
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "FAIL"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "UR"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 60
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "User credentials do not match. Please ensure that you enter the correct information."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": ""
+                },
+                "userid": {
+                  "type": "number",
+                  "example": -1
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "FAIL"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_5"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/Insert": {
+      "post": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Insert new POS record",
+        "description": "Inserts a new POS record for the user.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "PosName": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "active": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "merchantid": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "key": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "POS record successfully inserted",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string",
+                  "example": "bigint"
+                },
+                "UserId": {
+                  "type": "string",
+                  "example": "bigint"
+                },
+                "PosName": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "Active": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "Remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "MerchantId": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "ApiKey": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "CreatedDate": {
+                  "type": "string",
+                  "example": "date"
+                },
+                "CreatedIP": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "CreatedSource": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "CreatedBy": {
+                  "type": "string",
+                  "example": "string"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/Update": {
+      "post": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Update existing POS record",
+        "description": "Updates an existing POS record.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "bigint"
+                },
+                "PosName": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "active": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "true for active, false for inactive"
+                    }
+                  }
+                },
+                "remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "merchantid": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "key": {
+                  "type": "string",
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "POS record successfully updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "Data": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "example": "bigint"
+                    },
+                    "PosName": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "Active": {
+                      "type": "string",
+                      "example": "boolean"
+                    },
+                    "Remark": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "MerchantId": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "ApiKey": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "LastModifiedBy": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "LastModifiedDate": {
+                      "type": "string",
+                      "example": "date"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/Delete": {
+      "post": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Delete POS record",
+        "description": "Deletes a POS record for the given User ID and POS ID.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "bigint"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "POS record successfully deleted",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "Data": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "example": "bigint"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/UpdateStatus/Active": {
+      "post": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Activate POS record",
+        "description": "Sets the Active status of a POS record to true.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "bigint"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "POS status successfully updated to Active",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "Data": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "example": "bigint"
+                    },
+                    "Active": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/UpdateStatus/Deactive": {
+      "post": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Deactivate POS record",
+        "description": "Sets the Active status of a POS record to false.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "bigint"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "POS status successfully updated to Deactive",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "Data": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "example": "bigint"
+                    },
+                    "Active": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/Get": {
+      "post": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Get a specific POS record",
+        "description": "Retrieve a specific POS record based on the User ID and POS ID.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "bigint"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "POS record successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "Data": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "string",
+                      "example": "bigint"
+                    },
+                    "PosName": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "Active": {
+                      "type": "string",
+                      "example": "boolean"
+                    },
+                    "MerchantId": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "ApiKey": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "CreatedDate": {
+                      "type": "string",
+                      "example": "date"
+                    },
+                    "CreatedIP": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "CreatedSource": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "CreatedBy": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/Search": {
+      "post": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Search POS records",
+        "description": "Search POS records based on provided criteria.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "posname": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "merchantid": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "key": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "active": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "applycreateddate": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "fromcreateddate": {
+                  "type": "string",
+                  "example": "date"
+                },
+                "endcreateddate": {
+                  "type": "string",
+                  "example": "date"
+                },
+                "currentpageno": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "pagesize": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "POS records successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "Data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "PosName": {
+                        "type": "string",
+                        "example": "string"
+                      },
+                      "MerchantId": {
+                        "type": "string",
+                        "example": "string"
+                      },
+                      "Active": {
+                        "type": "string",
+                        "example": "boolean"
+                      }
+                    }
+                  }
+                },
+                "totalRecords": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "pageSize": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "currentPage": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/GetDistinct/{by}": {
+      "get": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Get distinct values based on a specific field",
+        "description": "Fetch distinct values of a specific field like POSName or MerchantId, optionally filtering by active or inactive status.",
+        "parameters": [
+          {
+            "name": "by",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Enter a value from the list: posname, merchantid, posname_active, merchantid_active, posname_deactive, merchantid_deactive"
+          },
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved distinct values",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "Data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "example": "distinct_value"
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/POSOperation/GetDistinct/{by}/{merchantId}": {
+      "get": {
+        "tags": [
+          "POSOperation"
+        ],
+        "summary": "Get distinct values based on a specific field and Merchant ID",
+        "description": "Fetch distinct values of a specific field like POSName or MerchantId, filtered by MerchantId and optionally active or inactive status.",
+        "parameters": [
+          {
+            "name": "by",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Enter a value from the list: posname, merchantid, posname_active, merchantid_active, posname_deactive, merchantid_deactive"
+          },
+          {
+            "name": "merchantId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The Merchant ID to filter the results"
+          },
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved distinct values based on Merchant ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "Data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "example": "distinct_value"
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "ResponseStatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "ErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                },
+                "ErrorMsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                },
+                "SubErrorCode": {
+                  "type": "string",
+                  "example": "ECC_68"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Insert": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Insert a new campaign",
+        "description": "Insert a new campaign into the database",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "campaignname": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "active": {
+                  "type": "string",
+                  "example": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign created successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign created successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_576"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Update": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Update an existing campaign",
+        "description": "Update an existing campaign in the database",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign update data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "campaignname": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "active": {
+                  "type": "string",
+                  "example": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign updated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign updated successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_577"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Delete": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Delete an existing campaign",
+        "description": "Delete an existing campaign from the database",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign ID to delete",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign deleted successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign deleted successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_578"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Get": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Get a campaign by ID",
+        "description": "Fetch campaign details using its ID",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign ID",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "campaignname": {
+                      "type": "string",
+                      "example": "Campaign name"
+                    },
+                    "remark": {
+                      "type": "string",
+                      "example": "Remark"
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign retrieved successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_579"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/UpdateStatus/Active": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Update campaign status to Active",
+        "description": "Activate a campaign by updating its status to active",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign ID",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign activated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign activated successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_580"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/UpdateStatus/Deactive": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Update campaign status to Inactive",
+        "description": "Deactivate a campaign by updating its status to inactive",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campaign ID",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign deactivated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Campaign deactivated successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid ID or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_581"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/GetDistinct/{by}": {
+      "get": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Get distinct campaign names",
+        "description": "Fetch distinct campaign names or status (active/inactive)",
+        "parameters": [
+          {
+            "name": "by",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Enter a value from the list: campaignname, campaignname_active, campaignname_deactive"
+          },
+          {
+            "name": "user-id",
+            "in": "header",
+            "description": "Enter login UserId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Authorization",
+            "in": "header",
+            "description": "Enter login token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Distinct campaign data retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "CampaignName": {
+                        "type": "string",
+                        "example": "string"
+                      }
+                    }
+                  }
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Distinct campaign data retrieved successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter or User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid parameter or User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid parameter or User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid parameter or User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_583"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CampaignOperation/Search": {
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "summary": "Search campaigns",
+        "description": "Search campaigns by various filters",
+        "parameters": [
+          {
+            "name": "user-id",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Search filters",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "createdip": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "remark": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "actived": {
+                  "type": "string",
+                  "example": "boolean"
+                },
+                "campaignname": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "pagesize": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "currentpage": {
+                  "type": "string",
+                  "example": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results fetched successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "campaignname": {
+                        "type": "string",
+                        "example": "string"
+                      },
+                      "active": {
+                        "type": "boolean",
+                        "example": true
+                      }
+                    }
+                  }
+                },
+                "isresponse": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "errorcode": {},
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 0
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Search results fetched successfully"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid User ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 400
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Invalid User ID"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isresponse": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "responsestatus": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "errorcode": {
+                  "type": "string",
+                  "example": "ECC_584"
+                },
+                "suberrorcode": {
+                  "type": "number",
+                  "example": 500
+                },
+                "errormsg": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Dashboard/TotalDevice": {
+      "get": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Fetch total number of devices",
+        "description": "Returns the total number of devices for a specific user, split into connected and disconnected.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "description": "User ID for the request",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved total devices",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Connected": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "integer"
+                    }
+                  }
+                },
+                "DisConnected": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "integer"
+                    }
+                  }
+                },
+                "Total": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "integer"
+                    }
+                  }
+                },
+                "IsResponse": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                },
+                "ResponseStatus": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorMsg": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "SubErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                },
+                "ResponseStatus": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorMsg": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "SubErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Dashboard/ConnectedList": {
+      "get": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Fetch list of connected devices",
+        "description": "Returns a list of connected devices for a specific user.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "description": "User ID for the request",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved connected devices",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "List": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "array"
+                    },
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "object"
+                        }
+                      }
+                    }
+                  }
+                },
+                "IsResponse": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                },
+                "ResponseStatus": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorMsg": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "SubErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "No connected devices found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                },
+                "ResponseStatus": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorMsg": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "SubErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                },
+                "ResponseStatus": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorMsg": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "SubErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Dashboard/DisconnectedList": {
+      "get": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "Fetch list of disconnected devices",
+        "description": "Returns a list of disconnected devices for a specific user.",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "UserId",
+            "in": "header",
+            "description": "User ID for the request",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved disconnected devices",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "List": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "array"
+                    },
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "object"
+                        }
+                      }
+                    }
+                  }
+                },
+                "IsResponse": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                },
+                "ResponseStatus": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorMsg": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "SubErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "No disconnected devices found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                },
+                "ResponseStatus": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorMsg": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "SubErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "IsResponse": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "boolean"
+                    }
+                  }
+                },
+                "ResponseStatus": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "ErrorMsg": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                },
+                "SubErrorCode": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
