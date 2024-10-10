@@ -1,9 +1,6 @@
 const express = require('express');
 const prisma = require('../../prisma/client');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const authmiddleware = require('../middleware/auth');
-const tokenProvider = { secret: 'your-secret-key' }; // Replace with your actual secret
 
 const router = express.Router();
 
