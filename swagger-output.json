@@ -5,7 +5,7 @@
     "description": "API documentation for Campaign Operations",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "localhost:9500",
   "basePath": "/",
   "schemes": [
     "http"
