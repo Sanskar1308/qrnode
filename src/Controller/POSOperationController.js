@@ -12,7 +12,7 @@ BigInt.prototype.toJSON = function() {
 };
 
 // Insert API
-router.post('/Insert', async (req, res) => {
+router.post('/Insert',authmiddleware, async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Insert new POS record'
     // #swagger.description = 'Inserts a new POS record for the user.'
@@ -92,7 +92,7 @@ router.post('/Insert', async (req, res) => {
 });
 
 // Update API
-router.post('/Update', async (req, res) => {
+router.post('/Update',authmiddleware, async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Update existing POS record'
     // #swagger.description = 'Updates an existing POS record.'
@@ -178,7 +178,7 @@ router.post('/Update', async (req, res) => {
 });
 
 // Delete API
-router.post('/Delete', async (req, res) => {
+router.post('/Delete',authmiddleware, async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Delete POS record'
     // #swagger.description = 'Deletes a POS record for the given User ID and POS ID.'
@@ -317,7 +317,7 @@ router.post('/UpdateStatus/Active', authmiddleware, async (req, res) => {
 
 
 // Update Status Deactive API
-router.post('/UpdateStatus/Deactive', async (req, res) => {
+router.post('/UpdateStatus/Deactive',authmiddleware, async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Deactivate POS record'
     // #swagger.description = 'Sets the Active status of a POS record to false.'
@@ -402,7 +402,7 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
 
 // Get API
 
-router.post('/Get', async (req, res) => {
+router.post('/Get',authmiddleware, async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Get a specific POS record'
     // #swagger.description = 'Retrieve a specific POS record based on the User ID and POS ID.'
@@ -473,7 +473,7 @@ router.post('/Get', async (req, res) => {
 });
 
 // Search API
-router.post('/Search', async (req, res) => {
+router.post('/Search',authmiddleware, async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Search POS records'
     // #swagger.description = 'Search POS records based on provided criteria.'
@@ -563,7 +563,7 @@ router.post('/Search', async (req, res) => {
 });
 
 // Get Distinct API
-router.get('/GetDistinct/:by', async (req, res) => {
+router.get('/GetDistinct/:by',authmiddleware, async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Get distinct values based on a specific field'
     // #swagger.description = 'Fetch distinct values of a specific field like POSName or MerchantId, optionally filtering by active or inactive status.'
@@ -669,7 +669,7 @@ router.get('/GetDistinct/:by', async (req, res) => {
 });
 
 // Get Distinct with Merchant ID API
-router.get('/GetDistinct/:by/:merchantId', async (req, res) => {
+router.get('/GetDistinct/:by/:merchantId',authmiddleware, async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Get distinct values based on a specific field and Merchant ID'
     // #swagger.description = 'Fetch distinct values of a specific field like POSName or MerchantId, filtered by MerchantId and optionally active or inactive status.'

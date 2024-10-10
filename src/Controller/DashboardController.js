@@ -4,8 +4,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenProvider = { secret: 'your-secret-key' };
 const router = express.Router();
+const authmiddleware = require('../middleware/auth')
 
-router.get('/TotalDevice', async (req, res) => {
+router.get('/TotalDevice',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Device']
     // #swagger.summary = 'Fetch total number of devices'
     // #swagger.description = 'Returns the total number of devices for a specific user, split into connected and disconnected.'
@@ -106,7 +107,7 @@ router.get('/TotalDevice', async (req, res) => {
     }
 });
 
-router.get('/ConnectedList', async (req, res) => {
+router.get('/ConnectedList',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Device']
     // #swagger.summary = 'Fetch list of connected devices'
     // #swagger.description = 'Returns a list of connected devices for a specific user.'
@@ -207,7 +208,7 @@ router.get('/ConnectedList', async (req, res) => {
     }
 });
 
-router.get('/DisconnectedList', async (req, res) => {
+router.get('/DisconnectedList',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Device']
     // #swagger.summary = 'Fetch list of disconnected devices'
     // #swagger.description = 'Returns a list of disconnected devices for a specific user.'

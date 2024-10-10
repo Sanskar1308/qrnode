@@ -2,12 +2,13 @@ const express = require('express');
 const prisma = require('../../prisma/client');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const authmiddleware = require('../middleware/auth');
 const tokenProvider = { secret: 'your-secret-key' }; // Replace with your actual secret
 
 const router = express.Router();
 
 // Insert Campaign
-router.post('/Insert', async (req, res) => {
+router.post('/Insert',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Campaign']
     // #swagger.summary = 'Insert a new campaign'
     // #swagger.description = 'Insert a new campaign into the database'
@@ -102,7 +103,7 @@ router.post('/Insert', async (req, res) => {
 });
 
 // Update Campaign
-router.post('/Update', async (req, res) => {
+router.post('/Update',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Campaign']
     // #swagger.summary = 'Update an existing campaign'
     // #swagger.description = 'Update an existing campaign in the database'
@@ -208,7 +209,7 @@ router.post('/Update', async (req, res) => {
 });
 
 // Delete Campaign
-router.post('/Delete', async (req, res) => {
+router.post('/Delete',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Campaign']
     // #swagger.summary = 'Delete an existing campaign'
     // #swagger.description = 'Delete an existing campaign from the database'
@@ -314,7 +315,7 @@ router.post('/Delete', async (req, res) => {
 });
 
 // Get Campaign
-router.post('/Get', async (req, res) => {
+router.post('/Get',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Campaign']
     // #swagger.summary = 'Get a campaign by ID'
     // #swagger.description = 'Fetch campaign details using its ID'
@@ -428,7 +429,7 @@ router.post('/Get', async (req, res) => {
 });
 
 // Update Status to Active
-router.post('/UpdateStatus/Active', async (req, res) => {
+router.post('/UpdateStatus/Active',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Campaign']
     // #swagger.summary = 'Update campaign status to Active'
     // #swagger.description = 'Activate a campaign by updating its status to active'
@@ -532,7 +533,7 @@ router.post('/UpdateStatus/Active', async (req, res) => {
 });
 
 // Update Status to Inactive (Deactive)
-router.post('/UpdateStatus/Deactive', async (req, res) => {
+router.post('/UpdateStatus/Deactive',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Campaign']
     // #swagger.summary = 'Update campaign status to Inactive'
     // #swagger.description = 'Deactivate a campaign by updating its status to inactive'
@@ -635,7 +636,7 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
     }
 });
 
-router.get('/GetDistinct/:by', async (req, res) => {
+router.get('/GetDistinct/:by',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Campaign']
     // #swagger.summary = 'Get distinct campaign names'
     // #swagger.description = 'Fetch distinct campaign names or status (active/inactive)'
@@ -758,7 +759,7 @@ router.get('/GetDistinct/:by', async (req, res) => {
 });
 
 // Search Campaigns
-router.post('/Search', async (req, res) => {
+router.post('/Search',authmiddleware, async (req, res) => {
     // #swagger.tags = ['Campaign']
     // #swagger.summary = 'Search campaigns'
     // #swagger.description = 'Search campaigns by various filters'
