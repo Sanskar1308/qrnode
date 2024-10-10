@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenProvider = { secret: 'your-secret-key' };
 const router = express.Router();
+const authmiddleware = require('../middleware/auth');
 
 // Add BigInt serialization support
 BigInt.prototype.toJSON = function() {
@@ -234,9 +235,8 @@ router.post('/Delete', async (req, res) => {
     }
 });
 
-// Update Status Active API
-router.post('/UpdateStatus/Active', async (req, res) => {
-    // #swagger.tags = ['POSOperation']
+router.post('/UpdateStatus/Active', authmiddleware , async (req, res) => {
+  // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Activate POS record'
     // #swagger.description = 'Sets the Active status of a POS record to true.'
 
@@ -267,10 +267,24 @@ router.post('/UpdateStatus/Active', async (req, res) => {
             SubErrorCode: 'ECC_68'
         }
     } */
-
     try {
         const model = req.body;
-        model.UserId = parseInt(req.headers['userid'] || req.headers['UserId'], 10);
+        model.ModifiedBy = "User";
+        model.Operation = "Active";
+        model.Ip = req.ip;
+        model.Source = "web";
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
+
+        // Validate UserId
+        if (isNaN(model.UserId) || model.UserId <= 0) {
+            return res.status(400).json({
+                IsResponse: false,
+                ResponseStatus: 'Invalid User ID',
+                ErrorCode: 'Invalid User ID',
+                ErrorMsg: 'Invalid User ID',
+                SubErrorCode: 'Invalid User ID'
+            });
+
 
         const updateStatusResult = await prisma.postbl.update({
             where: { Id: model.Id },
@@ -299,6 +313,7 @@ router.post('/UpdateStatus/Active', async (req, res) => {
     }
 });
 
+
 // Update Status Deactive API
 router.post('/UpdateStatus/Deactive', async (req, res) => {
     // #swagger.tags = ['POSOperation']
@@ -310,6 +325,7 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
         required: true,
         schema: {
             id: 'bigint'
+
         }
     } */
 
@@ -333,9 +349,23 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
         }
     } */
 
-    try {
+   try {
         const model = req.body;
-        model.UserId = parseInt(req.headers['userid'] || req.headers['UserId'], 10);
+        model.ModifiedBy = "User";
+        model.Operation = "Deactive";
+        model.Ip = req.ip;
+        model.Source = "web";
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
+
+        // Validate UserId
+        if (isNaN(model.UserId) || model.UserId <= 0) {
+            return res.status(400).json({
+                IsResponse: false,
+                ResponseStatus: 'Invalid User ID',
+                ErrorCode: 'Invalid User ID',
+                ErrorMsg: 'Invalid User ID',
+                SubErrorCode: 'Invalid User ID'
+            });
 
         const updateStatusResult = await prisma.postbl.update({
             where: { Id: model.Id },
@@ -348,13 +378,17 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
             }
         });
 
-        res.json({
+
+        // Return the updated record
+        return res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
             Data: updateStatusResult
         });
+
     } catch (error) {
-        res.status(500).json({
+        // Respond with a standardized error message
+        return res.status(500).json({
             IsResponse: false,
             ResponseStatus: 'Error',
             ErrorCode: 'ECC_68',
@@ -364,7 +398,9 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
     }
 });
 
+
 // Get API
+
 router.post('/Get', async (req, res) => {
     // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Get a specific POS record'
