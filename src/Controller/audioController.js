@@ -10,7 +10,7 @@ const router = express.Router();
 // Multer config to save file in "uploads" folder
 const upload = multer({ dest: 'uploads/' });
 
-route.post('/Insert', upload.single('file'),authmiddleware, async (req, res) => {
+router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) => {
     try {
         const model = req.body;
         model.file = req.file;

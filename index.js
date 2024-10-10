@@ -8,7 +8,7 @@ const POSOperationController = require('./src/Controller/POSOperationController'
 const campaignController = require('./src/Controller/campaignController');
 const DashboardController = require('./src/Controller/DashboardController');
 const campaigninfoController = require('./src/Controller/campaigninfoController');
-const audioController = require('./src/Controller/audippController');
+const audioController = require('./src/Controller/audioController');
 
 // Middleware
 const app = express();
