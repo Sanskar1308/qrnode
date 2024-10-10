@@ -398,8 +398,6 @@ router.post('/UpdateStatus/Deactive',authmiddleware, async (req, res) => {
     }
 });
 
-
-
 // Get API
 
 router.post('/Get',authmiddleware, async (req, res) => {

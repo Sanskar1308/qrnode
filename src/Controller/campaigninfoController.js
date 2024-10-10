@@ -3,6 +3,7 @@ const prisma = require('../../prisma/client');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer'); // Import multer
+const authmiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }); // Initialize multer with storage configuration
 
 // Insert API with file upload
-router.post('/Insert', upload.single('file'), async (req, res) => {
+router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) => {
     try {
         const model = req.body;
         model.file = req.file;
@@ -107,7 +108,7 @@ router.post('/Insert', upload.single('file'), async (req, res) => {
     }
 });
 
-router.post('/Update', async (req, res) => {
+router.post('/Update',authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
@@ -170,7 +171,7 @@ router.post('/Update', async (req, res) => {
     }
 });
 
-router.post('/Delete', async (req, res) => {
+router.post('/Delete',authmiddleware, async (req, res) => {
     try {
         const model = req.body;
         
@@ -245,7 +246,7 @@ router.post('/Delete', async (req, res) => {
     }
 });
 
-router.post('/UpdateStatus/Active', async (req, res) => {
+router.post('/UpdateStatus/Active',authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
@@ -306,7 +307,7 @@ router.post('/UpdateStatus/Active', async (req, res) => {
     }
 });
 
-router.post('/UpdateStatus/Deactive', async (req, res) => {
+router.post('/UpdateStatus/Deactive',authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
@@ -367,7 +368,7 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
     }
 });
 
-router.post('/SwitchPosition', async (req, res) => {
+router.post('/SwitchPosition',authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
@@ -491,7 +492,7 @@ router.post('/SwitchPosition', async (req, res) => {
     }
 });
 
-router.post('/UpdatePosition', async (req, res) => {
+router.post('/UpdatePosition',authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
@@ -566,7 +567,7 @@ router.post('/UpdatePosition', async (req, res) => {
     }
 });
 
-router.post('/Search', async (req, res) => {
+router.post('/Search',authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
