@@ -235,8 +235,8 @@ router.post('/Delete', async (req, res) => {
     }
 });
 
-router.post('/UpdateStatus/Active', authmiddleware , async (req, res) => {
-  // #swagger.tags = ['POSOperation']
+router.post('/UpdateStatus/Active', authmiddleware, async (req, res) => {
+    // #swagger.tags = ['POSOperation']
     // #swagger.summary = 'Activate POS record'
     // #swagger.description = 'Sets the Active status of a POS record to true.'
 
@@ -267,6 +267,7 @@ router.post('/UpdateStatus/Active', authmiddleware , async (req, res) => {
             SubErrorCode: 'ECC_68'
         }
     } */
+    
     try {
         const model = req.body;
         model.ModifiedBy = "User";
@@ -284,7 +285,7 @@ router.post('/UpdateStatus/Active', authmiddleware , async (req, res) => {
                 ErrorMsg: 'Invalid User ID',
                 SubErrorCode: 'Invalid User ID'
             });
-
+        }
 
         const updateStatusResult = await prisma.postbl.update({
             where: { Id: model.Id },
@@ -314,6 +315,7 @@ router.post('/UpdateStatus/Active', authmiddleware , async (req, res) => {
 });
 
 
+
 // Update Status Deactive API
 router.post('/UpdateStatus/Deactive', async (req, res) => {
     // #swagger.tags = ['POSOperation']
@@ -325,7 +327,6 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
         required: true,
         schema: {
             id: 'bigint'
-
         }
     } */
 
@@ -348,8 +349,8 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
             SubErrorCode: 'ECC_68'
         }
     } */
-
-   try {
+    
+    try {
         const model = req.body;
         model.ModifiedBy = "User";
         model.Operation = "Deactive";
@@ -366,6 +367,7 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
                 ErrorMsg: 'Invalid User ID',
                 SubErrorCode: 'Invalid User ID'
             });
+        }
 
         const updateStatusResult = await prisma.postbl.update({
             where: { Id: model.Id },
@@ -378,14 +380,12 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
             }
         });
 
-
         // Return the updated record
         return res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
             Data: updateStatusResult
         });
-
     } catch (error) {
         // Respond with a standardized error message
         return res.status(500).json({
@@ -397,6 +397,7 @@ router.post('/UpdateStatus/Deactive', async (req, res) => {
         });
     }
 });
+
 
 
 // Get API
