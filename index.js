@@ -1,72 +1,48 @@
 const express = require("express");
-const app = express();
 const prisma = require('./prisma/client');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerDocument = require('./swagger-output.json');
-
 const userController = require('./src/Controller/userController');
-const POSOperationConrtroller = require('./src/Controller/POSOperationController');
+const POSOperationController = require('./src/Controller/POSOperationController');
 const campaignController = require('./src/Controller/campaignController');
 const DashboardController = require('./src/Controller/DashboardController');
+const campaigninfoController = require('./src/Controller/campaigninfoController');
 const audioController = require('./src/Controller/audippController');
 
 // Middleware
+const app = express();
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' })); // Allow all origins for testing purposes
-
-// Swagger definition options
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Campaign API',
-      version: '1.0.0',
-      description: 'API documentation for Campaign Operations',
-    },
-    servers: [
-      {
-        url: 'http://localhost:3000',
-        description: 'Local server',
-      },
-    ],
-  },
-  apis: ['./src/Controller/*.js'], // Points to your API route files
-};
-
-// Initialize swagger-jsdoc and generate Swagger docs dynamically
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
-
-// Serve the Swagger docs via Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use('/api-docs1', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(cors({
+  origin: 'http://localhost:9501', // Allow requests from Swagger UI hosted at 9501
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Allow credentials if necessary
+}));
 
 // Use the userController routes
 app.use('/api/UserOperation', userController);
-app.use('/api/POSOperation', POSOperationConrtroller);
+app.use('/api/POSOperation', POSOperationController);
 app.use('/api/CampaignOperation', campaignController);
-app.use('/api/Dashboard', DashboardController )
+app.use('/api/Dashboard', DashboardController);
+app.use('/api/CampaignInfoOperation', campaigninfoController);
 app.use('/api/AudioOperation', audioController)
 
-// Start the server and check the Prisma client connection
+// Start the main server at port 9500
 const startApp = async () => {
-    try {
-        // Test the database connection
-        const result = await prisma.$queryRaw`SELECT 1`;
-        console.log('Connection successful:', result);
+  try {
+    // Test the database connection
+    const result = await prisma.$queryRaw`SELECT 1`;
+    console.log('Connection successful:', result);
 
-        // Start the Express server
-        const port = 3000;
-        app.listen(port, () => {
-            console.log(`Server is running on http://localhost:${port}`);
-            console.log(`Swagger docs are available at http://localhost:${port}/api-docs`);
-        });
-    } catch (error) {
-        console.error('Error starting the app:', error);
-    }
+    // Start the Express server
+    const port = 9500;
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error('Error starting the app:', error);
+  }
 };
 
 startApp();
