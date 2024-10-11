@@ -58,7 +58,7 @@ router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) =>
         model.Source = "web";
 
         // Get UserId from headers exactly as `UserId` (case-sensitive)
-        model.UserId = parseInt(req.headers['user-id'], 10);
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         if (isNaN(model.UserId) || model.UserId <= 0) {
             return res.status(400).json({
@@ -115,7 +115,7 @@ router.post('/Update',authmiddleware, async (req, res) => {
         model.ModifiedBy = "User";
         model.Ip = req.ip;
         model.Source = "web";
-        model.UserId = parseInt(req.headers['user-id'], 10);
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         // Validate User ID
         if (!model.UserId || model.UserId <= 0) {
@@ -176,7 +176,7 @@ router.post('/Delete',authmiddleware, async (req, res) => {
         const model = req.body;
         
         // Extract UserId from headers
-        const userId = parseInt(req.headers['user-id'], 10);
+        const userId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         // Validate User ID from headers
         if (isNaN(userId) || userId <= 0) {
@@ -251,7 +251,7 @@ router.post('/UpdateStatus/Active',authmiddleware, async (req, res) => {
         const model = req.body;
 
         // Get UserId from headers
-        model.UserId = parseInt(req.headers['user-id'], 10);
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         // Validate UserId
         if (isNaN(model.UserId) || model.UserId <= 0) {
@@ -312,7 +312,7 @@ router.post('/UpdateStatus/Deactive',authmiddleware, async (req, res) => {
         const model = req.body;
 
         // Get UserId from headers
-        const userId = parseInt(req.headers['user-id'], 10);
+        const userId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         // Validate UserId
         if (isNaN(userId) || userId <= 0) {
@@ -373,7 +373,7 @@ router.post('/SwitchPosition',authmiddleware, async (req, res) => {
         const model = req.body;
 
         // Get UserId from headers
-        const userId = parseInt(req.headers['user-id'], 10);
+        const userId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         // Validate UserId
         if (isNaN(userId) || userId <= 0) {
@@ -497,7 +497,7 @@ router.post('/UpdatePosition',authmiddleware, async (req, res) => {
         const model = req.body;
 
         // Get UserId from headers
-        const userId = parseInt(req.headers['user-id'], 10);
+        const userId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         // Validate UserId
         if (isNaN(userId) || userId <= 0) {
@@ -572,7 +572,7 @@ router.post('/Search',authmiddleware, async (req, res) => {
         const model = req.body;
 
         // Get UserId from headers
-        const userId = parseInt(req.headers['user-id'], 10);
+        const userId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         // Validate UserId
         if (isNaN(userId) || userId <= 0) {

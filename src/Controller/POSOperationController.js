@@ -13,50 +13,6 @@ BigInt.prototype.toJSON = function() {
 
 // Insert API
 router.post('/Insert',authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Insert new POS record'
-    // #swagger.description = 'Inserts a new POS record for the user.'
-
-    /* #swagger.parameters['body'] = {
-        in: 'body',
-        required: true,
-        schema: {
-            PosName: 'string',
-            active: 'boolean',
-            remark: 'string',
-            merchantid: 'string',
-            key: 'string'
-        }
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'POS record successfully inserted',
-        schema: {
-            Id: 'bigint',
-            UserId: 'bigint',
-            PosName: 'string',
-            Active: 'boolean',
-            Remark: 'string',
-            MerchantId: 'string',
-            ApiKey: 'string',
-            CreatedDate: 'date',
-            CreatedIP: 'string',
-            CreatedSource: 'string',
-            CreatedBy: 'string'
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
-
     try {
         const model = req.body;
         model.CreatedBy = "User";
@@ -93,52 +49,7 @@ router.post('/Insert',authmiddleware, async (req, res) => {
 
 // Update API
 router.post('/Update',authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Update existing POS record'
-    // #swagger.description = 'Updates an existing POS record.'
-
-    /* #swagger.parameters['body'] = {
-        in: 'body',
-        required: true,
-        schema: {
-            id: 'bigint',
-            PosName: 'string',
-            active: { type: 'boolean', description: 'true for active, false for inactive' } ,
-            remark: 'string',
-            merchantid: 'string',
-            key: 'string'
-        }
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'POS record successfully updated',
-        schema: {
-            IsResponse: true,
-            ResponseStatus: 'Success',
-            Data: {
-                Id: 'bigint',
-                PosName: 'string',
-                Active: 'boolean',
-                Remark: 'string',
-                MerchantId: 'string',
-                ApiKey: 'string',
-                LastModifiedBy: 'string',
-                LastModifiedDate: 'date'
-            }
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
-
+ 
     try {
         const model = req.body;
         model.ModifiedBy = "User";
@@ -179,37 +90,6 @@ router.post('/Update',authmiddleware, async (req, res) => {
 
 // Delete API
 router.post('/Delete',authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Delete POS record'
-    // #swagger.description = 'Deletes a POS record for the given User ID and POS ID.'
-
-    /* #swagger.parameters['body'] = {
-        in: 'body',
-        required: true,
-        schema: {
-            id: 'bigint'
-        }
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'POS record successfully deleted',
-        schema: {
-            IsResponse: true,
-            ResponseStatus: 'Success',
-            Data: { Id: 'bigint' }
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
 
     try {
         const model = req.body;
@@ -236,38 +116,7 @@ router.post('/Delete',authmiddleware, async (req, res) => {
 });
 
 router.post('/UpdateStatus/Active', authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Activate POS record'
-    // #swagger.description = 'Sets the Active status of a POS record to true.'
-
-    /* #swagger.parameters['body'] = {
-        in: 'body',
-        required: true,
-        schema: {
-            id: 'bigint'
-        }
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'POS status successfully updated to Active',
-        schema: {
-            IsResponse: true,
-            ResponseStatus: 'Success',
-            Data: { Id: 'bigint', Active: 'boolean' }
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
-    
+  
     try {
         const model = req.body;
         model.ModifiedBy = "User";
@@ -318,38 +167,7 @@ router.post('/UpdateStatus/Active', authmiddleware, async (req, res) => {
 
 // Update Status Deactive API
 router.post('/UpdateStatus/Deactive',authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Deactivate POS record'
-    // #swagger.description = 'Sets the Active status of a POS record to false.'
-
-    /* #swagger.parameters['body'] = {
-        in: 'body',
-        required: true,
-        schema: {
-            id: 'bigint'
-        }
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'POS status successfully updated to Deactive',
-        schema: {
-            IsResponse: true,
-            ResponseStatus: 'Success',
-            Data: { Id: 'bigint', Active: 'boolean' }
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
-    
+ 
     try {
         const model = req.body;
         model.ModifiedBy = "User";
@@ -401,48 +219,7 @@ router.post('/UpdateStatus/Deactive',authmiddleware, async (req, res) => {
 // Get API
 
 router.post('/Get',authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Get a specific POS record'
-    // #swagger.description = 'Retrieve a specific POS record based on the User ID and POS ID.'
-
-    /* #swagger.parameters['body'] = {
-        in: 'body',
-        required: true,
-        schema: {
-            id: 'bigint'
-        }
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'POS record successfully retrieved',
-        schema: {
-            IsResponse: true,
-            ResponseStatus: 'Success',
-            Data: {
-                Id: 'bigint',
-                PosName: 'string',
-                Active: 'boolean',
-                MerchantId: 'string',
-                ApiKey: 'string',
-                CreatedDate: 'date',
-                CreatedIP: 'string',
-                CreatedSource: 'string',
-                CreatedBy: 'string'
-            }
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
-
+ 
     try {
         const model = req.body;
         model.UserId = parseInt(req.headers['userid'] || req.headers['UserId'], 10);
@@ -472,49 +249,7 @@ router.post('/Get',authmiddleware, async (req, res) => {
 
 // Search API
 router.post('/Search',authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Search POS records'
-    // #swagger.description = 'Search POS records based on provided criteria.'
-
-    /* #swagger.parameters['body'] = {
-        in: 'body',
-        required: true,
-        schema: {
-            posname: 'string',
-            merchantid: 'string',
-            key: 'string',
-            active: 'boolean',
-            applycreateddate: 'boolean',
-            fromcreateddate: 'date',
-            endcreateddate: 'date',
-            currentpageno: 'integer',
-            pagesize: 'integer'
-        }
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'POS records successfully retrieved',
-        schema: {
-            IsResponse: true,
-            ResponseStatus: 'Success',
-            Data: [{ PosName: 'string', MerchantId: 'string', Active: 'boolean' }],
-            totalRecords: 'integer',
-            pageSize: 'integer',
-            currentPage: 'integer'
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
-
+ 
     try {
         const model = req.body;
         model.UserId = parseInt(req.headers['userid'] || req.headers['UserId'], 10);
@@ -562,37 +297,7 @@ router.post('/Search',authmiddleware, async (req, res) => {
 
 // Get Distinct API
 router.get('/GetDistinct/:by',authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Get distinct values based on a specific field'
-    // #swagger.description = 'Fetch distinct values of a specific field like POSName or MerchantId, optionally filtering by active or inactive status.'
-
-    /* #swagger.parameters['by'] = {
-        in: 'path',
-        description: 'Enter a value from the list: posname, merchantid, posname_active, merchantid_active, posname_deactive, merchantid_deactive',
-        required: true,
-        type: 'string'
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'Successfully retrieved distinct values',
-        schema: {
-            IsResponse: true,
-            ResponseStatus: 'Success',
-            Data: [{ value: 'distinct_value' }]
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
-
+  
     try {
         const by = req.params.by;
 
@@ -668,44 +373,7 @@ router.get('/GetDistinct/:by',authmiddleware, async (req, res) => {
 
 // Get Distinct with Merchant ID API
 router.get('/GetDistinct/:by/:merchantId',authmiddleware, async (req, res) => {
-    // #swagger.tags = ['POSOperation']
-    // #swagger.summary = 'Get distinct values based on a specific field and Merchant ID'
-    // #swagger.description = 'Fetch distinct values of a specific field like POSName or MerchantId, filtered by MerchantId and optionally active or inactive status.'
-
-    /* #swagger.parameters['by'] = {
-        in: 'path',
-        description: 'Enter a value from the list: posname, merchantid, posname_active, merchantid_active, posname_deactive, merchantid_deactive',
-        required: true,
-        type: 'string'
-    } */
-
-    /* #swagger.parameters['merchantId'] = {
-        in: 'path',
-        description: 'The Merchant ID to filter the results',
-        required: true,
-        type: 'string'
-    } */
-
-    /* #swagger.responses[200] = {
-        description: 'Successfully retrieved distinct values based on Merchant ID',
-        schema: {
-            IsResponse: true,
-            ResponseStatus: 'Success',
-            Data: [{ value: 'distinct_value' }]
-        }
-    } */
-
-    /* #swagger.responses[500] = {
-        description: 'Internal Server Error',
-        schema: {
-            IsResponse: false,
-            ResponseStatus: 'Error',
-            ErrorCode: 'ECC_68',
-            ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_68'
-        }
-    } */
-
+ 
     try {
         const by = req.params.by;
         const merchantId = req.params.merchantId;
