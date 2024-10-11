@@ -32,7 +32,7 @@ router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) =>
         model.CreatedBy = "User";
         model.Ip = req.ip;
         model.Source = "web";
-        model.UserId = parseInt(req.headers['user-id'], 10) || 1;
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         if (model.UserId <= 0) {
             return res.status(400).json({
@@ -140,7 +140,7 @@ router.post('/UpdateFile', upload.single('file'), authmiddleware, async (req, re
         model.ModifiedBy = "User";
         model.Ip = req.ip;
         model.Source = "web";
-        model.UserId = parseInt(req.headers['user-id'], 10) || 1;
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         if (model.UserId <= 0) {
             return res.status(400).json({
@@ -225,7 +225,7 @@ router.post('/Update', authmiddleware, async (req, res) => {
         model.ModifiedBy = "User";
         model.Ip = req.ip;
         model.Source = "web";
-        model.UserId = parseInt(req.headers['user-id'], 10);
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         if (model.UserId <= 0) {
             return res.status(400).json({
@@ -287,7 +287,7 @@ router.post('/Update', authmiddleware, async (req, res) => {
 router.post('/Delete', authmiddleware, async (req, res) => {
     try {
         const model = req.body;
-        model.UserId = parseInt(req.headers['user-id'], 10);
+        model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
 
         if (model.UserId <= 0) {
@@ -340,7 +340,7 @@ router.post('/Delete', authmiddleware, async (req, res) => {
 router.get('/Get/:id', authmiddleware, async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const userId = parseInt(req.headers['user-id'], 10);
+        const userId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
         if (userId <= 0) {
             return res.status(400).json({
