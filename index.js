@@ -59,7 +59,7 @@ const startApp = async () => {
     console.log('Connection successful:', result);
 
     // Start the server (both Express and WebSocket on the same port)
-    const port = 3000;
+    const port = 9500;
     server.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });

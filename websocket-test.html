@@ -13,11 +13,11 @@
 
   <script>
     // Create a new Socket.IO connection
-    const socket = io('http://localhost:3000');
+    const socket = io('http://localhost:9500');
 
     // Handle connection open
     socket.on('connect', function () {
-      console.log('Socket.IO connected to http://localhost:3000');
+      console.log('Socket.IO connected to http://localhost:9500');
 
       // Send a test message to the server once connected
       socket.emit('message', {
