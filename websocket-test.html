@@ -22,11 +22,11 @@
       // Send a test message to the server once connected
       socket.emit('message', {
         Action: 'login',
-        MerchantName: 'example',
+        MerchantName: 'M123',
         Key: 'key123',
-        PosName: 'POS1'
+        PosName: 'test POS',
+        Msg: 'Login request from POS'
       });
-
       console.log('Login message sent to the server.');
     });
 

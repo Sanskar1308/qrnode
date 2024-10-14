@@ -1,3 +1,5 @@
+const prisma = require('../prisma/client'); // Make sure to import the Prisma client
+
 class MyWebSocketBehavior {
     constructor(io) {
         this.io = io;
@@ -28,9 +30,41 @@ class MyWebSocketBehavior {
         }
     }
 
+    // Login handler using Prisma to search for a POS entry
     async handleLogin(socket, result) {
-        // Your login logic goes here
-        socket.emit('message', JSON.stringify({ success: true, message: 'Login successful' }));
+        // Validate input
+        if (!result.MerchantName || !result.Key || !result.PosName || !result.Msg) {
+            socket.emit('message', JSON.stringify({ success: false, message: 'invalid login data' }));
+            socket.disconnect();
+            return;
+        }
+
+        try {
+            // Query the POS table using Prisma
+            const posRecord = await prisma.postbl.findFirst({
+                where: {
+                    MerchantId: result.MerchantName,
+                    ApiKey: result.Key,
+                    PosName: result.PosName,
+                }
+            });
+
+            if (!posRecord) {
+                // If no matching record is found
+                socket.emit('message', JSON.stringify({ success: false, message: 'No matching POS record found' }));
+                socket.disconnect();
+                return;
+            }
+
+            // If the POS record is found, you can perform additional checks here if needed
+
+            // Emit a successful login response
+            socket.emit('message', JSON.stringify({ success: true, message: 'Login successful', posData: posRecord }));
+
+        } catch (error) {
+            console.error("Error querying POS table:", error);
+            socket.emit('message', JSON.stringify({ success: false, message: 'Error processing login request' }));
+        }
     }
 
     handlePing(socket, result) {
