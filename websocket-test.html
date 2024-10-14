@@ -11,6 +11,22 @@
   <h1>Socket.IO Connection Test</h1>
   <p>Check the browser console for Socket.IO connection logs.</p>
 
+  <label for="merchantName">Merchant Name:</label>
+  <input type="text" id="merchantName" value="M123" name="merchantName"><br><br>
+
+  <label for="key">Key:</label>
+  <input type="text" id="key" value="key123" name="key"><br><br>
+
+  <label for="posName">POS Name:</label>
+  <input type="text" id="posName" value="test POS" name="posName"><br><br>
+
+  <label for="msg">Message:</label>
+  <input type="text" id="msg" value="dfgsfg" name="msg"><br><br>
+
+  <button id="sendButton">Send</button>
+
+  <p id="response"></p>
+
   <script>
     // Create a new Socket.IO connection
     const socket = io('http://localhost:9500');
@@ -18,21 +34,12 @@
     // Handle connection open
     socket.on('connect', function () {
       console.log('Socket.IO connected to http://localhost:9500');
-
-      // Send a test message to the server once connected
-      socket.emit('message', {
-        Action: 'login',
-        MerchantName: 'M123',
-        Key: 'key123',
-        PosName: 'test POS',
-        Msg: 'Login request from POS'
-      });
-      console.log('Login message sent to the server.');
     });
 
-    // Handle messages received from the server
+    // Handle messages received from the server and update the <p> tag
     socket.on('message', function (data) {
       console.log('Message from server:', data);
+      document.getElementById('response').innerHTML = 'Response: ' + JSON.stringify(data); // Update the response paragraph with the data
     });
 
     // Handle errors
@@ -44,7 +51,27 @@
     socket.on('disconnect', function () {
       console.log('Socket.IO connection closed.');
     });
+
+    // Send button click event
+    document.getElementById('sendButton').addEventListener('click', function() {
+      const merchantName = document.getElementById('merchantName').value;
+      const key = document.getElementById('key').value;
+      const posName = document.getElementById('posName').value;
+      const msg = document.getElementById('msg').value;
+
+      const data = {
+        Action: 'login',
+        MerchantName: merchantName,
+        Key: key,
+        PosName: posName,
+        Msg: msg
+      };
+
+      socket.emit('message', data);
+
+      console.log('Login message sent to the server:', data);
+    });
+
   </script>
 
-</body>
-</html>
+</body></html>
