@@ -12,12 +12,12 @@ class MyWebSocketBehavior {
         console.log(posResult);
         posResult.data.forEach((pos) => {
             // Use pos.PosId to match the WebSocket client stored in clients Map
-            const socket = this.clients.get(pos.PosId); // Ensure PosId matches what was used during connection
+            const socket = this.clients.get(pos.ApiKey); // Ensure PosId matches what was used during connection
             if (socket) {
-                console.log(`Sending data to POS device: ${pos.PosId}, Data: ${JSON.stringify(data)}`);
+                console.log(`Sending data to POS device: ${pos.ApiKey}, Data: ${JSON.stringify(data)}`);
                 socket.emit('message', data); // Send data to WebSocket client
             } else {
-                console.log(`No WebSocket client found for POS device: ${pos.PosId}`);
+                console.log(`No WebSocket client found for POS device: ${pos.ApiKey}`);
             }
         });
     }
