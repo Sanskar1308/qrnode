@@ -34,8 +34,8 @@ class SendToDeviceController {
             }
 
             const sendImageModels = caminfoResult.data.map(row => ({
-                path: row.filePath,
-                position: row.position
+                path: row.FilePath,
+                position: row.Position
             }));
 
             // Check if there are images to send

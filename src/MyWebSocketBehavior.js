@@ -9,7 +9,6 @@ class MyWebSocketBehavior {
     }
 
     sendToClients(posResult, data) {
-        console.log(posResult);
         posResult.data.forEach((pos) => {
             // Use pos.PosId to match the WebSocket client stored in clients Map
             const socket = this.clients.get(pos.ApiKey); // Ensure PosId matches what was used during connection
