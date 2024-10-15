@@ -29,8 +29,13 @@
 
   <script>
     // Create a new Socket.IO connection
-    const socket = io('http://localhost:9500');
-
+    socket = io('http://localhost:9500', {
+      query: {
+        merchantName: merchantName,
+        posName: posName,
+        PosId: 'key123' // If you have PosId, pass it here
+      }
+    });
     // Handle connection open
     socket.on('connect', function () {
       console.log('Socket.IO connected to http://localhost:9500');

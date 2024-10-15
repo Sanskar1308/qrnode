@@ -8,16 +8,20 @@ class MyWebSocketBehavior {
         this.clients = new Map();
     }
 
-    sendToClients(posResult, sendImageModels) {
+    sendToClients(posResult, data) {
+        console.log(posResult);
         posResult.data.forEach((pos) => {
-            const socket = this.clients.get(pos.deviceId); // Assume deviceId identifies a connected WebSocket client
+            // Use pos.PosId to match the WebSocket client stored in clients Map
+            const socket = this.clients.get(pos.PosId); // Ensure PosId matches what was used during connection
             if (socket) {
-                const outgoingMessage = new OutSocketMsgModel('send_image', true, 'Image sent', sendImageModels);
-                socket.emit('message', JSON.stringify(outgoingMessage));
+                console.log(`Sending data to POS device: ${pos.PosId}, Data: ${JSON.stringify(data)}`);
+                socket.emit('message', data); // Send data to WebSocket client
+            } else {
+                console.log(`No WebSocket client found for POS device: ${pos.PosId}`);
             }
         });
     }
-
+    
     async onMessage(socket, data) {
         try {
             // Parse and validate the incoming message using the IncomingSocketMsgModel
@@ -94,6 +98,23 @@ class MyWebSocketBehavior {
     handlePing(socket, result) {
         const pingResponse = new OutSocketMsgModel("ping", true, "PONG");
         socket.emit('message', JSON.stringify(pingResponse));
+    }
+
+    handleConnection(socket) {
+        const merchantName = socket.handshake.query.merchantName;
+        const posName = socket.handshake.query.posName;
+
+        // Assuming PosId is a unique identifier, e.g., retrieved from your database
+        const posId = socket.handshake.query.PosId || `${merchantName}-${posName}`; // Use PosId if available
+
+        // Store the socket in the clients Map
+        this.clients.set(posId, socket);
+        console.log(`POS device connected: ${posId}`);
+
+        socket.on('disconnect', () => {
+            console.log(`POS device disconnected: ${posId}`);
+            this.clients.delete(posId);
+        });
     }
 
     onClose(socket) {
