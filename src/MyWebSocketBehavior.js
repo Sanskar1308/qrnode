@@ -1,3 +1,5 @@
+const IncomingSocketMsgModel = require('./IncomingSocketMsgModel');
+const OutSocketMsgModel = require('./OutSocketMsgModel');
 const prisma = require('../prisma/client'); // Make sure to import the Prisma client
 
 class MyWebSocketBehavior {
@@ -8,71 +10,83 @@ class MyWebSocketBehavior {
 
     async onMessage(socket, data) {
         try {
-            const result = data;
-            if (!result || !result.Action) {
-                socket.emit('message', JSON.stringify({ success: false, message: 'invalid action' }));
+            // Parse and validate the incoming message using the IncomingSocketMsgModel
+            const incomingMsg = new IncomingSocketMsgModel(
+                data.Action || "",
+                data.MerchantName || "",
+                data.Key || "",
+                data.PosName || "",
+                data.Msg || ""
+            );
+
+            // Check if action is provided and process accordingly
+            if (!incomingMsg.action) {
+                const errorResponse = new OutSocketMsgModel("error", true, "Invalid action");
+                socket.emit('message', JSON.stringify(errorResponse));
                 socket.disconnect();
                 return;
             }
 
-            const action = result.Action.toLowerCase().trim();
+            const action = incomingMsg.action.toLowerCase().trim();
+
             if (action === 'login') {
-                await this.handleLogin(socket, result);
+                await this.handleLogin(socket, incomingMsg);
             } else if (action === 'ping') {
-                this.handlePing(socket, result);
+                this.handlePing(socket, incomingMsg);
             } else {
-                socket.emit('message', JSON.stringify({ success: false, message: 'invalid action' }));
+                const errorResponse = new OutSocketMsgModel("error", true, "Invalid action");
+                socket.emit('message', JSON.stringify(errorResponse));
                 socket.disconnect();
             }
         } catch (error) {
             console.error("Error handling message:", error);
-            socket.emit('message', JSON.stringify({ success: false, message: 'Error processing message' }));
+            const errorResponse = new OutSocketMsgModel("error", true, "Error processing message");
+            socket.emit('message', JSON.stringify(errorResponse));
         }
     }
 
     // Login handler using Prisma to search for a POS entry
     async handleLogin(socket, result) {
-        // Validate input
-        if (!result.MerchantName || !result.Key || !result.PosName || !result.Msg) {
-            socket.emit('message', JSON.stringify({ success: false, message: 'invalid login data' }));
+        if (!result.merchantName || !result.key || !result.posName || !result.msg) {
+            const errorResponse = new OutSocketMsgModel("login", false, "Invalid login data");
+            socket.emit('message', JSON.stringify(errorResponse));
             socket.disconnect();
             return;
         }
 
         try {
-            // Query the POS table using Prisma
             const posRecord = await prisma.postbl.findFirst({
                 where: {
-                    MerchantId: result.MerchantName,
-                    ApiKey: result.Key,
-                    PosName: result.PosName,
+                    MerchantId: result.merchantName,
+                    ApiKey: result.key,
+                    PosName: result.posName,
                 }
             });
 
             if (!posRecord) {
-                // If no matching record is found
-                socket.emit('message', JSON.stringify({ success: false, message: 'No matching POS record found' }));
+                const errorResponse = new OutSocketMsgModel("login", false, "No matching POS record found");
+                socket.emit('message', JSON.stringify(errorResponse));
                 socket.disconnect();
                 return;
             }
 
             // If the POS record is found, you can perform additional checks here if needed
-
-            // Emit a successful login response
-            socket.emit('message', JSON.stringify({ success: true, message: 'Login successful', posData: posRecord }));
+            const successResponse = new OutSocketMsgModel("login", true, "Login successful", [], []);
+            socket.emit('message', JSON.stringify(successResponse));
 
         } catch (error) {
             console.error("Error querying POS table:", error);
-            socket.emit('message', JSON.stringify({ success: false, message: 'Error processing login request' }));
+            const errorResponse = new OutSocketMsgModel("login", false, "Error processing login request");
+            socket.emit('message', JSON.stringify(errorResponse));
         }
     }
 
     handlePing(socket, result) {
-        socket.emit('message', JSON.stringify({ success: true, message: 'PONG' }));
+        const pingResponse = new OutSocketMsgModel("ping", true, "PONG");
+        socket.emit('message', JSON.stringify(pingResponse));
     }
 
     onClose(socket) {
-        // Handle socket disconnection here
         console.log(`Socket disconnected: ${socket.id}`);
     }
 }
