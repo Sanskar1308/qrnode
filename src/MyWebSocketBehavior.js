@@ -1,11 +1,21 @@
 const IncomingSocketMsgModel = require('./IncomingSocketMsgModel');
 const OutSocketMsgModel = require('./OutSocketMsgModel');
-const prisma = require('../prisma/client'); // Make sure to import the Prisma client
+const prisma = require('../prisma/client'); // Prisma client
 
 class MyWebSocketBehavior {
     constructor(io) {
         this.io = io;
         this.clients = new Map();
+    }
+
+    sendToClients(posResult, sendImageModels) {
+        posResult.data.forEach((pos) => {
+            const socket = this.clients.get(pos.deviceId); // Assume deviceId identifies a connected WebSocket client
+            if (socket) {
+                const outgoingMessage = new OutSocketMsgModel('send_image', true, 'Image sent', sendImageModels);
+                socket.emit('message', JSON.stringify(outgoingMessage));
+            }
+        });
     }
 
     async onMessage(socket, data) {
@@ -34,13 +44,13 @@ class MyWebSocketBehavior {
             } else if (action === 'ping') {
                 this.handlePing(socket, incomingMsg);
             } else {
-                const errorResponse = new OutSocketMsgModel("error", true, "Invalid action");
+                const errorResponse = new OutSocketMsgModel("error", false, "Invalid action");
                 socket.emit('message', JSON.stringify(errorResponse));
                 socket.disconnect();
             }
         } catch (error) {
             console.error("Error handling message:", error);
-            const errorResponse = new OutSocketMsgModel("error", true, "Error processing message");
+            const errorResponse = new OutSocketMsgModel("error", false, "Error processing message");
             socket.emit('message', JSON.stringify(errorResponse));
         }
     }
