@@ -351,11 +351,11 @@ router.post('/UpdateStatus/Deactive',authmiddleware, async (req, res) => {
     }
 });
 
-router.get('/GetDistinct/:by',authmiddleware, async (req, res) => {
-
+router.get('/GetDistinct/:by', authmiddleware, async (req, res) => {
     try {
         const { by } = req.params;
 
+        // Check if the 'by' parameter is valid
         if (!['campaignname', 'campaignname_active', 'campaignname_deactive'].includes(by)) {
             return res.status(400).json({
                 isresponse: false,
@@ -368,6 +368,7 @@ router.get('/GetDistinct/:by',authmiddleware, async (req, res) => {
 
         const userId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
+        // Check if userId is valid
         if (userId <= 0) {
             return res.status(400).json({
                 isresponse: false,
@@ -385,6 +386,7 @@ router.get('/GetDistinct/:by',authmiddleware, async (req, res) => {
             filter = { Active: false };
         }
 
+        // Execute the Prisma query to fetch Id and CampaignName from campaigntbl
         const result = await prisma.campaigntbl.findMany({
             where: {
                 UserId: BigInt(userId),
@@ -392,19 +394,42 @@ router.get('/GetDistinct/:by',authmiddleware, async (req, res) => {
             },
             distinct: ['CampaignName'],
             select: {
-                CampaignName: true
+                Id: true,          // Select Id
+                CampaignName: true  // Select CampaignName
             }
         });
 
+        // Log the result to see what the query returned
+        console.log("Prisma Query Result:", result);
+
+        // Check if there is any result to return
+        if (!result || result.length === 0) {
+            return res.status(404).json({
+                isresponse: false,
+                responsestatus: 'Error',
+                errorcode: 'NoRecordsFound',
+                suberrorcode: 404,
+                errormsg: 'No campaigns found for this user'
+            });
+        }
+
+        // Map the result to include only Id and CampaignName in the desired format
         return res.json({
-            data: result,
+            data: result.map((item) => ({
+                id: item.Id,
+                value: item.CampaignName  // Map CampaignName to 'value'
+            })),
             isresponse: true,
-            responsestatus: 'Success',
-            errorcode: null,
-            suberrorcode: 0,
-            errormsg: 'Distinct campaign data retrieved successfully'
+            responsestatus: 'SUCCESS',
+            errorcode: 'CampaignR',
+            suberrorcode: 200,
+            errormsg: 'success'
         });
     } catch (error) {
+        // Log the actual error for debugging
+        console.error("Error occurred:", error);
+
+        // Return the Internal Server Error response
         return res.status(500).json({
             isresponse: false,
             responsestatus: 'Error',
