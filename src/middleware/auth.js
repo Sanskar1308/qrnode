@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // Middleware to verify JWT
 const authmiddleware = (req, res, next) => {
-    const token = req.headers['x-authorization']; // Get token from 'x-authorization'
+    const token = req.headers['x-authorization'] || req.headers['X-Authorization'];  // Use X-Authorization here
 
     if (!token) {
         console.log('No token provided');
@@ -34,5 +34,6 @@ const authmiddleware = (req, res, next) => {
         next(); // Continue to next middleware or route handler
     });
 };
+
 
 module.exports = authmiddleware;
