@@ -18,7 +18,7 @@
   <input type="text" id="key" value="key123" name="key"><br><br>
 
   <label for="posName">POS Name:</label>
-  <input type="text" id="posName" value="test POS" name="posName"><br><br>
+  <input type="text" id="posName" value="test POS1" name="posName"><br><br>
 
   <label for="msg">Message:</label>
   <input type="text" id="msg" value="dfgsfg" name="msg"><br><br>
@@ -33,7 +33,7 @@
       query: {
         merchantName: merchantName,
         posName: posName,
-        PosId: 'key123' // If you have PosId, pass it here
+        apiKey: key // If you have PosId, pass it here
       }
     });
     // Handle connection open

@@ -3,23 +3,28 @@ const OutSocketMsgModel = require('./OutSocketMsgModel');
 const prisma = require('../prisma/client'); // Prisma client
 
 class MyWebSocketBehavior {
-    constructor(io) {
+    constructor(io, clients) {
         this.io = io;
-        this.clients = new Map();
+        this.clients = clients;
     }
 
     sendToClients(posResult, data) {
-        posResult.data.forEach((pos) => {
-            // Use pos.PosId to match the WebSocket client stored in clients Map
-            const socket = this.clients.get(pos.ApiKey); // Ensure PosId matches what was used during connection
+        console.log('Sending data to POS devices:', posResult.data.map(pos => pos.ApiKey));  // Log the ApiKeys
+        
+        posResult.data.map((pos) => {
+            // Use pos.ApiKey to match the WebSocket client stored in clients Map
+            const socket = this.clients.get(pos.ApiKey); // Ensure pos.ApiKey matches what was used during connection
+            console.log('Socket:', socket);  // Log the socket found in the clients Map
+            
             if (socket) {
                 console.log(`Sending data to POS device: ${pos.ApiKey}, Data: ${JSON.stringify(data)}`);
-                socket.emit('message', data); // Send data to WebSocket client
+                socket.emit('message', data);  // Send data to WebSocket client
             } else {
                 console.log(`No WebSocket client found for POS device: ${pos.ApiKey}`);
             }
         });
     }
+    
     
     async onMessage(socket, data) {
         try {

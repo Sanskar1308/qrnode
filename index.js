@@ -62,8 +62,10 @@ const io = new Server(server, {
   }
 });
 
+const clients = new Map();
+
 // Initialize the WebSocket behavior
-const myWebSocket = new MyWebSocketBehavior(io);
+const myWebSocket = new MyWebSocketBehavior(io, clients);
 
 // Instantiate the SendToDeviceController with repositories and WebSocket behavior
 const sendToDeviceController = new SendToDeviceController(
@@ -87,9 +89,16 @@ app.post('/api/SendToDevice/Campaign', validateModel, authmiddleware, (req, res)
 app.post('/api/SendToDevice/Separate', validateModel, jwtAuthorizationFilterFactory, upload.single('file'), (req, res) => sendToDeviceController.separate(req, res));
 app.post('/api/SendToDevice/Audio', validateModel, authmiddleware, (req, res) => sendToDeviceController.audio(req, res));
 
-// Handle WebSocket connections
+
 io.on('connection', (socket) => {
-  console.log('Client connected:', socket.id);
+  const apiKey = socket.handshake.query.apiKey;
+  
+  if (apiKey) {
+      console.log(`Client with ApiKey ${apiKey} connected`);
+      clients.set(apiKey, socket);  // Store the socket connection in the map
+  } else {
+      console.log('No ApiKey provided, client not stored');
+  }
 
   // Handle messages from the client
   socket.on('message', async (data) => {
