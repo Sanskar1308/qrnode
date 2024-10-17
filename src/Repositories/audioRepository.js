@@ -4,10 +4,10 @@ class AudioRepository {
     // Fetch audio data based on audioId and userId
     async getDataTable({ audioId, userId }) {
         try {
-            const data = await prisma.audio.findMany({
+            const data = await prisma.audiotbl.findMany({ // Change this to match your model
                 where: {
-                    id: audioId,
-                    userId: userId
+                    Id: audioId,
+                    UserId: userId
                 }
             });
 
@@ -23,7 +23,7 @@ class AudioRepository {
             };
         }
     }
-
+    
     // Insert a new audio record
     async insertAudio(audioData) {
         try {
