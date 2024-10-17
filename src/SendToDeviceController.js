@@ -109,7 +109,11 @@ class SendToDeviceController {
         try {
             const model = req.body;
             const userId = req.userId; // Assume userId is set by jwtAuthorizationFilterFactory
-
+    
+            // Log the input values to check what's being passed
+            console.log('Received request body:', model);
+            console.log('Received userId:', userId);
+    
             // Validate input
             if (model.AudioId <= 0) {
                 return res.status(400).json({ error: 'Invalid AudioId' });
@@ -117,34 +121,48 @@ class SendToDeviceController {
             if (userId <= 0) {
                 return res.status(400).json({ error: 'Invalid UserId' });
             }
-
+    
             // Fetch audio data
             const audioResult = await this._audioRepository.getDataTable({ audioId: model.AudioId, userId });
+    
+            // Log the result from the audio query to check the data fetched
+            console.log('Audio query result:', audioResult);
+    
             if (!audioResult.isResponse) {
                 return res.status(400).json({ error: 'Audio not found' });
             }
-
+    
             // Fetch POS devices to send audio to
             const posResult = await this._posRepository.getDataTable({ userId, posId: model.PosId, merchantName: model.MerchantName });
+    
+            // Log the result from the POS query to check the data fetched
+            console.log('POS query result:', posResult);
+    
             if (!posResult.isResponse) {
                 return res.status(400).json({ error: 'POS not found' });
             }
-
+    
             // Send data to WebSocket clients (POS devices)
             const sendAudioModels = audioResult.data.map(row => ({
-                path: row.filePath,
-                position: row.position
-            }));
+                path: row.DownloadPath,
+                position: row.Id
+            }));            
+    
+            // Log the models being sent to WebSocket clients
+            console.log('Sending audio models to WebSocket clients:', sendAudioModels);
+    
             this._webSocketBehavior.sendToClients(posResult, sendAudioModels);
-
+    
             // Respond with success
             res.json({ isResponse: true, sendAudioModels });
         } catch (error) {
-            // Log error and respond with internal server error
+            // Log the error
+            console.error('Error in audio method:', error);
             AppLogger.error('ECC_618', 'Error in audio method', 'fullPath', 'SendToDeviceController', 'audio', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
+    
 }
 
 module.exports = SendToDeviceController;

@@ -85,7 +85,7 @@ app.use('/api/AudioOperation', audioController);
 // Define routes for SendToDevice functionality
 app.post('/api/SendToDevice/Campaign', validateModel, authmiddleware, (req, res) => sendToDeviceController.campaign(req, res));
 app.post('/api/SendToDevice/Separate', validateModel, jwtAuthorizationFilterFactory, upload.single('file'), (req, res) => sendToDeviceController.separate(req, res));
-app.post('/api/SendToDevice/Audio', validateModel, jwtAuthorizationFilterFactory, (req, res) => sendToDeviceController.audio(req, res));
+app.post('/api/SendToDevice/Audio', validateModel, authmiddleware, (req, res) => sendToDeviceController.audio(req, res));
 
 // Handle WebSocket connections
 io.on('connection', (socket) => {
