@@ -42,17 +42,27 @@
     });
 
     // Handle messages received from the server and update the <p> tag
-    socket.on('message', function (data) {
-      const parsedData = JSON.parse(data); // Parse the data once
-      console.log('Message from server:', parsedData);
+//       socket.on('message', function (data) {
+//   console.log('Message received from server:', data); // Add log for message received
+//   try {
+//     const parsedData = JSON.parse(data);
+//     console.log('Parsed message from server:', parsedData); // Add parsed log
+//   } catch (e) {
+//     console.error('Error parsing message:', e);
+//   }
+// });
 
-      if (parsedData.isResponse && parsedData.msg === "Login successful") {
+
+socket.on('message', function(data) {
+  console.log('Message received from server:', data);
+  const parsedData = JSON.parse(data); // Parse the data once
+
+  if (parsedData.isResponse && parsedData.msg === "Login successful") {
         document.getElementById('response').innerHTML = 'Response: ' + parsedData.msg + '!!!'; // Update the response paragraph
       // } else {
       //   document.getElementById('response').innerHTML = 'Response: ' + parsedData.msg;
       }
-    });
-
+});
     // Handle errors
     socket.on('connect_error', function (error) {
       console.error('Socket.IO connection error:', error);
@@ -66,25 +76,22 @@
 
     // Send button click event
     document.getElementById('sendButton').addEventListener('click', function() {
-      const merchantName = document.getElementById('merchantName').value;
-      const key = document.getElementById('key').value;
-      const posName = document.getElementById('posName').value;
-      const msg = document.getElementById('msg').value;
+   const merchantName = document.getElementById('merchantName').value;
+   const key = document.getElementById('key').value;
+   const posName = document.getElementById('posName').value;
+   const msg = document.getElementById('msg').value;
 
-      const data = {
-        Action: 'login',
-        MerchantName: merchantName,
-        Key: key,
-        PosName: posName,
-        Msg: msg
-      };
+   const data = {
+      Action: 'login',
+      MerchantName: merchantName,
+      Key: key,
+      PosName: posName,
+      Msg: msg
+   };
 
-      socket.emit('message', data);
-
-      console.log('Login message sent to the server:', data);
-    });
-
+   console.log('Sending login data:', data); // Log the data before sending
+   socket.emit('message', data);
+});
   </script>
-
 </body>
 </html>

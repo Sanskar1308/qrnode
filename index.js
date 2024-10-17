@@ -89,7 +89,32 @@ app.post('/api/SendToDevice/Audio', validateModel, jwtAuthorizationFilterFactory
 
 // Handle WebSocket connections
 io.on('connection', (socket) => {
-  myWebSocket.handleConnection(socket); // Use handleConnection method from MyWebSocketBehavior
+  console.log('Client connected:', socket.id);
+
+  // Handle messages from the client
+  socket.on('message', async (data) => {
+    console.log('Received message:', data); // Log the received data (it should already be an object)
+
+    try {
+      // Assuming data is already an object, no need to parse it
+      // Check if the action is 'login' and handle it
+      if (data.Action && data.Action.toLowerCase() === 'login') {
+        await myWebSocket.handleLogin(socket, data); // Call handleLogin if the action is 'login'
+      } else if (data.Action && data.Action.toLowerCase() === 'ping') {
+        await myWebSocket.handlePing(socket, data); // Call handleLogout if the action is 'logout'
+      } else {
+        // Handle other actions here if needed
+        socket.emit('message', JSON.stringify({ msg: 'Unknown action' }));
+      }
+    } catch (error) {
+      console.error('Error processing message:', error);
+      socket.emit('message', JSON.stringify({ msg: 'Error processing message' }));
+    }
+  });
+  // Handle client disconnection
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
 });
 
 // Start the main server at port 9500
