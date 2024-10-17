@@ -39,7 +39,6 @@ router.post('/Register', async (req, res) => {
 
 // Login API
 router.post('/VerifyCredential', async (req, res) => {
-  
     try {
         const { username, password } = req.body;
         const user = await prisma.user.findUnique({
@@ -60,7 +59,7 @@ router.post('/VerifyCredential', async (req, res) => {
 
         // JWT_SECRET is fetched from the environment variables
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-        res.setHeader('x-authorization', token);
+        res.setHeader('X-Authorization', token);  // Changed to X-Authorization
 
         return res.json({
             token: token,
@@ -83,6 +82,7 @@ router.post('/VerifyCredential', async (req, res) => {
         });
     }
 });
+
 
 
 module.exports = router;
