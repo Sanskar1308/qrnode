@@ -31,9 +31,9 @@
     // Create a new Socket.IO connection
     socket = io('http://localhost:9500', {
       query: {
-        merchantName: merchantName,
-        posName: posName,
-        apiKey: key // If you have PosId, pass it here
+        // merchantName: merchantName,
+        // posName: posName,
+        apiKey: 'key123' // If you have PosId, pass it here
       }
     });
     // Handle connection open
