@@ -12,7 +12,8 @@ class SendToDeviceController {
         try {
             const model = req.body;
             const userId = req.userId; // Assume userId is set by jwtAuthorizationFilterFactory
-   console.log(`${JSON.stringify(model)} ${userId}` );
+            console.log(`${JSON.stringify(model)} ${userId}` );
+            
             // Validate input
             if (model.CampaignId <= 0) {
                 return res.status(400).json({ error: 'Invalid CampaignId' });
@@ -55,8 +56,6 @@ class SendToDeviceController {
             // Respond with success
             res.json({ isResponse: true, sendImageModels });
         } catch (error) {
-            // Log error and respond with internal server error
-            // AppLogger.error('ECC_618', 'Error in campaign method', 'fullPath', 'SendToDeviceController', 'campaign', error);
             res.status(500).json({ error: 'Internal Server Error' });
             console.log(error);
         }
@@ -98,8 +97,6 @@ class SendToDeviceController {
             // Respond with success
             res.json({ isResponse: true, sendImageModels });
         } catch (error) {
-            // Log error and respond with internal server error
-            AppLogger.error('ECC_618', 'Error in separate method', 'fullPath', 'SendToDeviceController', 'separate', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
@@ -158,7 +155,6 @@ class SendToDeviceController {
         } catch (error) {
             // Log the error
             console.error('Error in audio method:', error);
-            AppLogger.error('ECC_618', 'Error in audio method', 'fullPath', 'SendToDeviceController', 'audio', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }

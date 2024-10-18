@@ -73,15 +73,16 @@ const jwtAuthorizationFilterFactory = (req, res, next) => {
 // Validation middleware (Example)
 const validateModel = (req, res, next) => {
   const { body } = req;
-
-  if (!body || !body.CampaignId || body.CampaignId <= 0) {
+  console.log(body)
+  if (!body || body.CampaignId <= 0  || body.AudioId <= 0) {
+    console.log("invalid body")
     return res.status(400).json({ message: 'Invalid CampaignId' });
   }
 
   if (!body.MerchantName || body.MerchantName.trim() === "") {
     return res.status(400).json({ message: 'MerchantName is required' });
   }
-
+  
   next();
 };
 
