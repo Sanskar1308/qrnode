@@ -57,7 +57,12 @@ class MyWebSocketBehavior {
            if (action === 'login') {
                console.log('Processing login action...');
                await this.handleLogin(socket, incomingMsg);
-           } else {
+           } 
+           else if (action === 'ping') {
+               console.log('Processing ping action...');
+               await this.handlePing(socket, incomingMsg);
+           }
+           else {
                console.log('Invalid action:', action);
                const errorResponse = new OutSocketMsgModel("error", false, "Invalid action");
                socket.send(JSON.stringify(errorResponse)); // Use `send` to send invalid action error
@@ -74,20 +79,20 @@ class MyWebSocketBehavior {
     async handleLogin(socket, result) {
         console.log('Handling login for:', result);
      
-        if (!result.merchantName || !result.key || !result.posName || !result.msg) {
-           const errorResponse = new OutSocketMsgModel("login", false, "Invalid login data");
-           console.log('Invalid login data:', result); // Log invalid data
-           socket.send(JSON.stringify(errorResponse)); // Use `send` to send error response
-           return;  // No need to close the connection immediately, let the client handle this
-        }
+        // if (!result.MerchantName || !result.Key || !result.PosName || !result.Msg) {
+        //    const errorResponse = new OutSocketMsgModel("login", false, "Invalid login data");
+        //    console.log('Invalid login data:', result); // Log invalid data
+        //    socket.send(JSON.stringify(errorResponse)); // Use `send` to send error response
+        //    return;  // No need to close the connection immediately, let the client handle this
+        // }
      
         try {
            // Query the POS record from the database
            const posRecord = await prisma.postbl.findFirst({
               where: {
-                 MerchantId: result.merchantName,
-                 ApiKey: result.key,
-                 PosName: result.posName,
+                 MerchantId: result.MerchantName,
+                 ApiKey: result.Key,
+                 PosName: result.PosName,
               }
            });
            console.log('POS Record found:', posRecord); // Log to ensure the record is fetched correctly
@@ -115,6 +120,7 @@ class MyWebSocketBehavior {
     // Handle Ping
     handlePing(socket, result) {
         const pingResponse = new OutSocketMsgModel("ping", true, "PONG");
+        console.log('Ping successful for:', pingResponse);
         socket.send(JSON.stringify(pingResponse)); // Use `send` to send PONG response
     }
 
