@@ -7,34 +7,52 @@ const path = require('path');
 
 const router = express.Router();
 
-// Multer config to save file in "uploads" folder
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, '/opt/qrnode/audiodata'); // Destination folder to store audio files
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}_${file.originalname}`); // Create a unique file name
+    }
+});
 
-router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) => {
+const upload = multer({ storage }); // Initialize multer with storage configuration
+
+router.post('/Insert', upload.single('file'), authmiddleware, async (req, res) => {
     try {
         const model = req.body;
         model.file = req.file;
 
+        // Check if file is uploaded
         if (!model.file) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
-                ErrorCode: 'ECC_651',
-                ErrorMsg: 'File is required',
-                SubErrorCode: 'ECC_651'
+                ErrorCode: 'ECC_620',
+                ErrorMsg: 'Audio file is required',
+                SubErrorCode: 'ECC_620'
             });
         }
 
-        if (!model.Name || model.Name.trim() === "") {
-            model.Name = "";
+        // Validate CampaignId (if needed)
+        if (model.CampaignId && model.CampaignId <= 0) {
+            return res.status(400).json({
+                IsResponse: false,
+                ResponseStatus: 'Error',
+                ErrorCode: 'ECC_606',
+                ErrorMsg: 'Invalid Campaign ID',
+                SubErrorCode: 'ECC_606'
+            });
         }
 
+        // Set additional properties
         model.CreatedBy = "User";
         model.Ip = req.ip;
         model.Source = "web";
         model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
-        if (model.UserId <= 0) {
+        // Validate UserId
+        if (isNaN(model.UserId) || model.UserId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -44,79 +62,57 @@ router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) =>
             });
         }
 
-        const audioSavePath = '/opt/qrcode/audiodata'; // Replace with actual save path
-        const audioDownloadUrl = '/url/to/download'; // Replace with actual download URL
+        // Handle file path logic
+        const fileName = req.file.filename; // File name from multer
+        const uploadDir = '/opt/qrnode/audiodata'; // Correct file path
+        const filePath = path.join(uploadDir, fileName); // Full file path
 
-        if (!fs.existsSync(audioSavePath)) {
-            return res.status(400).json({
-                IsResponse: false,
-                ResponseStatus: 'Error',
-                ErrorCode: 'ECC_653',
-                ErrorMsg: 'Save path does not exist',
-                SubErrorCode: 'ECC_653'
-            });
-        }
+        // Define the base URL of your server
+        const baseUrl = 'http://157.90.147.8:9500'; // Use your actual server URL
 
-        const directoryPath = path.join(audioSavePath, model.UserId.toString());
-        if (!fs.existsSync(directoryPath)) {
-            fs.mkdirSync(directoryPath, { recursive: true });
-        }
+        // Construct the full audio file URL
+        const fileUrl = `${baseUrl}/audios/${fileName}`; // URL path for accessing the audio file
 
-        const originalFileName = model.file.originalname;
-        const systemFileName = `${model.UserId}_${Date.now()}_${originalFileName}`;
-        const filePath = path.join(directoryPath, systemFileName);
-        const fileSize = model.file.size;
-        console.log('Model:', model);
-        console.log('File Save Path:', filePath);
-        
-        // Move the file from temp location to final destination
-        fs.renameSync(model.file.path, filePath);
-
-        model.DownloadPath = `${audioDownloadUrl}/${model.UserId}/${systemFileName}`;
-
-        // Insert into the database using Prisma
+        // Insert into the `audiotbl` table using Prisma
         const insertResult = await prisma.audiotbl.create({
             data: {
                 UserId: BigInt(model.UserId),
-                Name: model.Name,
-                OrgFileName: originalFileName,
-                SystemFileName: systemFileName,
-                FileSize: fileSize.toString(),
-                DownloadPath: model.DownloadPath,
+                Name: model.Name || "", // Set to empty string if not provided
+                OrgFileName: fileName,
+                SystemFileName: fileName,
+                FileSize: model.file.size.toString(),
+                DownloadPath: fileUrl, // Store the full URL to access the audio file
                 CreatedBy: model.CreatedBy,
                 CreatedDate: new Date(),
                 CreatedIP: model.Ip,
                 CreatedSource: model.Source,
-                Active: true // You can change this based on your logic
+                Active: true // Set active status to true by default
             }
         });
 
-        // Return the inserted record
+        // Respond with success
         res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
-            Data: insertResult,
-            ErrorCode: null,
-            ErrorMsg: null,
-            SubErrorCode: null
+            Data: insertResult
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({
             IsResponse: false,
             ResponseStatus: 'Error',
-            ErrorCode: 'ECC_658',
+            ErrorCode: 'ECC_596',
             ErrorMsg: 'Internal Server Error',
-            SubErrorCode: 'ECC_658'
+            SubErrorCode: 'ECC_596'
         });
     }
 });
-
 router.post('/UpdateFile', upload.single('file'), authmiddleware, async (req, res) => {
     try {
         const model = req.body;
         model.file = req.file;
 
+        // Validate if a file was uploaded
         if (!model.file) {
             return res.status(400).json({
                 IsResponse: false,
@@ -127,7 +123,8 @@ router.post('/UpdateFile', upload.single('file'), authmiddleware, async (req, re
             });
         }
 
-        if (model.Id <= 0) {
+        // Validate ID
+        if (!model.Id || model.Id <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -137,12 +134,9 @@ router.post('/UpdateFile', upload.single('file'), authmiddleware, async (req, re
             });
         }
 
-        model.ModifiedBy = "User";
-        model.Ip = req.ip;
-        model.Source = "web";
+        // Validate UserId
         model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
-
-        if (model.UserId <= 0) {
+        if (isNaN(model.UserId) || model.UserId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -152,20 +146,11 @@ router.post('/UpdateFile', upload.single('file'), authmiddleware, async (req, re
             });
         }
 
-        const audioSavePath = '/opt/qrcode/audiodata'; // Replace with actual path
-        const audioDownloadUrl = '/url/to/download'; // Replace with actual URL
-
-        if (!fs.existsSync(audioSavePath)) {
-            return res.status(400).json({
-                IsResponse: false,
-                ResponseStatus: 'Error',
-                ErrorCode: 'ECC_668',
-                ErrorMsg: 'Save path does not exist',
-                SubErrorCode: 'ECC_668'
-            });
-        }
-
+        // File path logic
+        const audioSavePath = '/opt/qrnode/audiodata'; // Replace with actual path
         const directoryPath = path.join(audioSavePath, model.UserId.toString());
+
+        // Create directory if it doesn't exist
         if (!fs.existsSync(directoryPath)) {
             fs.mkdirSync(directoryPath, { recursive: true });
         }
@@ -173,30 +158,30 @@ router.post('/UpdateFile', upload.single('file'), authmiddleware, async (req, re
         const fileName = `${model.UserId}_${Date.now()}_${model.file.originalname}`;
         const filePath = path.join(directoryPath, fileName);
 
-        // Move the file from temp location to final destination
+        // Move the file from temp location to the final destination
         fs.renameSync(model.file.path, filePath);
 
-        model.FilePath = `${audioDownloadUrl}/${model.UserId}/${fileName}`;
-        
+        // Construct the URL for accessing the file
+        const baseUrl = 'http://157.90.147.8:9500'; // Use your actual server URL
+        const fileUrl = `${baseUrl}/audios/${model.UserId}/${fileName}`;
 
         // Update the file information in the database using Prisma
         const updateResult = await prisma.audiotbl.update({
             where: {
-                Id: BigInt(model.Id), // Ensure this is the correct field name and data type in the schema
+                Id: BigInt(model.Id),
             },
             data: {
                 UserId: BigInt(model.UserId),
-                DownloadPath: model.FilePath,  // Change FilePath to DownloadPath to match your schema
-                LastModifiedBy: model?.ModifiedBy,
+                DownloadPath: fileUrl,  // Store the file URL in the database
+                LastModifiedBy: 'User', // Change as per your logic
                 LastModifiedDate: new Date(),
-                LastModifiedIP: model.Ip,
-                LastModifiedSource: model.Source,
+                LastModifiedIP: req.ip,
+                LastModifiedSource: 'web',
                 OrgFileName: model.file.originalname, // Store original file name
                 SystemFileName: fileName, // Store system file name
                 FileSize: model.file.size.toString(), // Store file size
             }
         });
-        
 
         res.json({
             IsResponse: true,
@@ -208,6 +193,7 @@ router.post('/UpdateFile', upload.single('file'), authmiddleware, async (req, re
         });
 
     } catch (error) {
+        console.error(error);
         res.status(500).json({
             IsResponse: false,
             ResponseStatus: 'Error',
@@ -222,12 +208,9 @@ router.post('/Update', authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
-        model.ModifiedBy = "User";
-        model.Ip = req.ip;
-        model.Source = "web";
+        // Validate UserId
         model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
-
-        if (model.UserId <= 0) {
+        if (isNaN(model.UserId) || model.UserId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -237,39 +220,37 @@ router.post('/Update', authmiddleware, async (req, res) => {
             });
         }
 
-        if (model.Id <= 0) {
+        // Validate ID
+        if (!model.Id || model.Id <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
-                ErrorCode: 'Invalid ID',
+                ErrorCode: 'ECC_665',
                 ErrorMsg: 'Invalid ID',
-                SubErrorCode: 'Invalid ID'
+                SubErrorCode: 'ECC_665'
             });
         }
 
         // Update the database using Prisma
         const updateResult = await prisma.audiotbl.update({
             where: {
-                Id: BigInt(model.Id), // Ensure this matches your schema
+                Id: BigInt(model.Id),
             },
             data: {
                 UserId: BigInt(model.UserId),
-                LastModifiedBy: model.ModifiedBy,
+                LastModifiedBy: 'User', // Hardcoded for now, adjust if needed
                 LastModifiedDate: new Date(),
-                LastModifiedIP: model.Ip,
-                LastModifiedSource: model.Source,
-                Active: model.Active, // assuming you're updating Active field
-                Name: model.Name, // assuming you're updating Name field
+                LastModifiedIP: req.ip,
+                LastModifiedSource: 'web',
+                Active: model.Active,
+                Name: model.Name,
             }
         });
 
         res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
-            Data: updateResult,
-            ErrorCode: null,
-            ErrorMsg: null,
-            SubErrorCode: null
+            Data: updateResult
         });
 
     } catch (error) {
@@ -287,10 +268,10 @@ router.post('/Update', authmiddleware, async (req, res) => {
 router.post('/Delete', authmiddleware, async (req, res) => {
     try {
         const model = req.body;
+
+        // Validate UserId
         model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
-
-
-        if (model.UserId <= 0) {
+        if (isNaN(model.UserId) || model.UserId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -300,30 +281,28 @@ router.post('/Delete', authmiddleware, async (req, res) => {
             });
         }
 
-        if (model.Id <= 0) {
+        // Validate ID
+        if (!model.Id || model.Id <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
-                ErrorCode: 'Invalid ID',
+                ErrorCode: 'ECC_665',
                 ErrorMsg: 'Invalid ID',
-                SubErrorCode: 'Invalid ID'
+                SubErrorCode: 'ECC_665'
             });
         }
 
-        // Use Prisma to delete the record by Id
+        // Delete record from the database using Prisma
         const deleteResult = await prisma.audiotbl.delete({
             where: {
-                Id: BigInt(model.Id), // Make sure this matches your schema
+                Id: BigInt(model.Id),
             }
         });
 
         res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
-            Data: deleteResult,
-            ErrorCode: null,
-            ErrorMsg: null,
-            SubErrorCode: null
+            Data: deleteResult
         });
     } catch (error) {
         console.error(error);
@@ -342,7 +321,7 @@ router.get('/Get/:id', authmiddleware, async (req, res) => {
         const id = parseInt(req.params.id, 10);
         const userId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
-        if (userId <= 0) {
+        if (isNaN(userId) || userId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -352,20 +331,20 @@ router.get('/Get/:id', authmiddleware, async (req, res) => {
             });
         }
 
-        if (id <= 0) {
+        if (isNaN(id) || id <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
-                ErrorCode: 'Invalid ID',
+                ErrorCode: 'ECC_665',
                 ErrorMsg: 'Invalid ID',
-                SubErrorCode: 'Invalid ID'
+                SubErrorCode: 'ECC_665'
             });
         }
 
-        // Use Prisma to fetch the record by Id
+        // Fetch record from the database using Prisma
         const getResult = await prisma.audiotbl.findUnique({
             where: {
-                Id: BigInt(id), // Ensure this matches your schema
+                Id: BigInt(id),
             }
         });
 
@@ -382,10 +361,7 @@ router.get('/Get/:id', authmiddleware, async (req, res) => {
         res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
-            Data: getResult,
-            ErrorCode: null,
-            ErrorMsg: null,
-            SubErrorCode: null
+            Data: getResult
         });
     } catch (error) {
         console.error(error);
@@ -403,7 +379,8 @@ router.post('/UpdateStatus/Active', authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
-        if (model.UserId <= 0) {
+        // Validate UserId
+        if (!model.UserId || model.UserId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -413,20 +390,21 @@ router.post('/UpdateStatus/Active', authmiddleware, async (req, res) => {
             });
         }
 
-        if (model.Id <= 0) {
+        // Validate ID
+        if (!model.Id || model.Id <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
-                ErrorCode: 'Invalid ID',
+                ErrorCode: 'ECC_665',
                 ErrorMsg: 'Invalid ID',
-                SubErrorCode: 'Invalid ID'
+                SubErrorCode: 'ECC_665'
             });
         }
 
-        // Use Prisma to update the "Active" status of the record
+        // Update Active status in the database using Prisma
         const updateStatusResult = await prisma.audiotbl.update({
             where: {
-                Id: BigInt(model.Id), // Ensure this matches your schema
+                Id: BigInt(model.Id),
             },
             data: {
                 Active: true // Set the Active status to true
@@ -436,10 +414,7 @@ router.post('/UpdateStatus/Active', authmiddleware, async (req, res) => {
         res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
-            Data: updateStatusResult,
-            ErrorCode: null,
-            ErrorMsg: null,
-            SubErrorCode: null
+            Data: updateStatusResult
         });
     } catch (error) {
         console.error(error);
@@ -457,7 +432,8 @@ router.post('/UpdateStatus/Deactive', authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
-        if (model.UserId <= 0) {
+        // Validate UserId
+        if (!model.UserId || model.UserId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -467,33 +443,31 @@ router.post('/UpdateStatus/Deactive', authmiddleware, async (req, res) => {
             });
         }
 
-        if (model.Id <= 0) {
+        // Validate ID
+        if (!model.Id || model.Id <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
-                ErrorCode: 'Invalid ID',
+                ErrorCode: 'ECC_665',
                 ErrorMsg: 'Invalid ID',
-                SubErrorCode: 'Invalid ID'
+                SubErrorCode: 'ECC_665'
             });
         }
 
-        // Use Prisma to update the "Active" status of the record
+        // Update Active status in the database using Prisma
         const updateStatusResult = await prisma.audiotbl.update({
             where: {
-                Id: BigInt(model.Id), // Ensure this matches your schema
+                Id: BigInt(model.Id),
             },
             data: {
-                Active: false // Set the Active status to true
+                Active: false // Set the Active status to false
             }
         });
 
         res.json({
             IsResponse: true,
             ResponseStatus: 'Success',
-            Data: updateStatusResult,
-            ErrorCode: null,
-            ErrorMsg: null,
-            SubErrorCode: null
+            Data: updateStatusResult
         });
     } catch (error) {
         console.error(error);
@@ -511,17 +485,18 @@ router.get('/GetDistinct/:by', authmiddleware, async (req, res) => {
     try {
         const by = req.params.by;
 
+        // Validate "by" parameter
         if (!by || by.trim() === "") {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
                 ErrorCode: 'Invalid parameter',
-                ErrorMsg: 'Invalid parameter',
+                ErrorMsg: 'Parameter "by" is required',
                 SubErrorCode: 'Invalid parameter'
             });
         }
 
-        // Validate the "by" parameter to ensure it's one of the allowed fields
+        // Validate the allowed fields
         const allowedFields = ['name', 'name_active', 'name_deactive'];
         if (!allowedFields.includes(by)) {
             return res.status(400).json({
@@ -533,21 +508,21 @@ router.get('/GetDistinct/:by', authmiddleware, async (req, res) => {
             });
         }
 
+        // Build the filter condition based on the parameter
         let distinctField;
         let condition = {};
-
-        // Handle different cases for the "by" parameter
+        
         switch (by) {
             case 'name':
                 distinctField = 'Name';
                 break;
             case 'name_active':
                 distinctField = 'Name';
-                condition = { Active: true }; // Only active names
+                condition = { Active: true }; // Fetch only active names
                 break;
             case 'name_deactive':
                 distinctField = 'Name';
-                condition = { Active: false }; // Only deactive names
+                condition = { Active: false }; // Fetch only deactivated names
                 break;
             default:
                 return res.status(400).json({
@@ -559,12 +534,12 @@ router.get('/GetDistinct/:by', authmiddleware, async (req, res) => {
                 });
         }
 
-        // Use Prisma to find distinct values
+        // Fetch distinct records using Prisma
         const getDistinctResult = await prisma.audiotbl.findMany({
             where: condition,
             distinct: [distinctField], // Prisma's distinct query
             select: {
-                [distinctField]: true // Select only the distinct field
+                [distinctField]: true // Only return the distinct field
             }
         });
 
@@ -592,7 +567,8 @@ router.post('/Search', authmiddleware, async (req, res) => {
     try {
         const model = req.body;
 
-        if (model.UserId <= 0) {
+        // Validate UserId
+        if (!model.UserId || model.UserId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
@@ -602,17 +578,17 @@ router.post('/Search', authmiddleware, async (req, res) => {
             });
         }
 
-        // Construct the filter condition dynamically
+        // Build filter conditions
         const filterConditions = {};
 
         if (model.name) {
             filterConditions.Name = {
-                contains: model.name, // Search for partial match
+                contains: model.name,
             };
         }
 
         if (model.active !== undefined) {
-            filterConditions.Active = model.active === 'true'; // Check for active status
+            filterConditions.Active = model.active === 'true';
         }
 
         if (model.fromCreatedDate && model.toCreatedDate) {
@@ -627,17 +603,17 @@ router.post('/Search', authmiddleware, async (req, res) => {
         const currentPage = model.currentPage || 1;
         const skip = (currentPage - 1) * pageSize;
 
-        // Perform the search using Prisma
+        // Perform search using Prisma
         const searchResult = await prisma.audiotbl.findMany({
             where: filterConditions,
-            skip: skip,
+            skip,
             take: pageSize,
             orderBy: {
                 CreatedDate: 'desc',
             },
         });
 
-        // Optional: total records for pagination
+        // Get total record count
         const totalRecords = await prisma.audiotbl.count({
             where: filterConditions,
         });
@@ -647,9 +623,6 @@ router.post('/Search', authmiddleware, async (req, res) => {
             ResponseStatus: 'Success',
             Data: searchResult,
             TotalRecords: totalRecords,
-            ErrorCode: null,
-            ErrorMsg: null,
-            SubErrorCode: null,
         });
     } catch (error) {
         console.error(error);
