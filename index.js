@@ -42,6 +42,8 @@ const upload = multer({ dest: 'uploads/' });
 
 // Serve static files from /opt/qrnode/infoimage
 app.use('/images', express.static('/opt/qrnode/infoimage'));
+app.use('/audios', express.static('/opt/qrnode/audiodata'));
+
 
 // JWT authorization middleware (Placeholder)
 const jwtAuthorizationFilterFactory = (req, res, next) => {
