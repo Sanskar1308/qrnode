@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Socket.IO Connection Test</title>
-  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script> <!-- Include Socket.IO client -->
+  <title>WebSocket Connection Test</title>
 </head>
 <body>
 
-  <h1>Socket.IO Connection Test</h1>
-  <p>Check the browser console for Socket.IO connection logs.</p>
+  <h1>WebSocket Connection Test</h1>
+  <p>Check the browser console for WebSocket connection logs.</p>
 
   <label for="merchantName">Merchant Name:</label>
   <input type="text" id="merchantName" value="M123" name="merchantName"><br><br>
@@ -28,70 +27,63 @@
   <p id="response"></p>
 
   <script>
-    // Create a new Socket.IO connection
-    socket = io('http://localhost:9500', {
-      query: {
-        // merchantName: merchantName,
-        // posName: posName,
-        apiKey: 'key123' // If you have PosId, pass it here
-      }
-    });
+    // Read apiKey from input field
+    const key = document.getElementById('key').value;
+
+    // Create a new WebSocket connection with apiKey as a query parameter
+    const socket = new WebSocket(`ws://localhost:9500?apiKey=${key}`); // Attach apiKey in URL
+
     // Handle connection open
-    socket.on('connect', function () {
-      console.log('Socket.IO connected to http://localhost:9500');
-    });
+    socket.onopen = function () {
+      console.log('WebSocket connected to ws://localhost:9500');
+    };
 
-    // Handle messages received from the server and update the <p> tag
-//       socket.on('message', function (data) {
-//   console.log('Message received from server:', data); // Add log for message received
-//   try {
-//     const parsedData = JSON.parse(data);
-//     console.log('Parsed message from server:', parsedData); // Add parsed log
-//   } catch (e) {
-//     console.error('Error parsing message:', e);
-//   }
-// });
+    // Handle messages received from the server
+    socket.onmessage = function (event) {
+      console.log('Message received from server:', event.data);
+      
+      try {
+        const parsedData = JSON.parse(event.data);
+        console.log('Parsed message from server:', parsedData);
 
-
-socket.on('message', function(data) {
-  console.log('Message received from server:', data);
-  const parsedData = JSON.parse(data); // Parse the data once
-
-  if (parsedData.isResponse && parsedData.msg === "Login successful") {
-        document.getElementById('response').innerHTML = 'Response: ' + parsedData.msg + '!!!'; // Update the response paragraph
-      // } else {
-      //   document.getElementById('response').innerHTML = 'Response: ' + parsedData.msg;
+        // If the message is a successful login, update the response element
+        if (parsedData.isResponse && parsedData.msg === "Login successful") {
+          document.getElementById('response').innerHTML = 'Response: ' + parsedData.msg + '!!!';
+        }
+      } catch (e) {
+        console.error('Error parsing message:', e);
       }
-});
+    };
+
     // Handle errors
-    socket.on('connect_error', function (error) {
-      console.error('Socket.IO connection error:', error);
-    });
+    socket.onerror = function (error) {
+      console.error('WebSocket connection error:', error);
+    };
 
     // Handle connection close
-    socket.on('disconnect', function () {
-      console.log('Socket.IO connection closed.');
-      document.getElementById('response').innerHTML = 'Socket disconnected.';
-    });
+    socket.onclose = function () {
+      console.log('WebSocket connection closed.');
+      document.getElementById('response').innerHTML = 'WebSocket disconnected.';
+    };
 
     // Send button click event
     document.getElementById('sendButton').addEventListener('click', function() {
-   const merchantName = document.getElementById('merchantName').value;
-   const key = document.getElementById('key').value;
-   const posName = document.getElementById('posName').value;
-   const msg = document.getElementById('msg').value;
+      const merchantName = document.getElementById('merchantName').value;
+      const key = document.getElementById('key').value;
+      const posName = document.getElementById('posName').value;
+      const msg = document.getElementById('msg').value;
 
-   const data = {
-      Action: 'login',
-      MerchantName: merchantName,
-      Key: key,
-      PosName: posName,
-      Msg: msg
-   };
+      const data = {
+        Action: 'login',
+        MerchantName: merchantName,
+        Key: key,
+        PosName: posName,
+        Msg: msg
+      };
 
-   console.log('Sending login data:', data); // Log the data before sending
-   socket.emit('message', data);
-});
+      console.log('Sending login data:', data);
+      socket.send(JSON.stringify(data)); // Send JSON string over WebSocket
+    });
   </script>
 </body>
 </html>

@@ -1,11 +1,11 @@
 const express = require("express");
-const http = require("http"); // To create a server for Express and Socket.IO
-const { Server } = require("socket.io"); // Import Socket.IO
+const http = require("http");
+const WebSocket = require("ws"); // Native WebSocket
 const prisma = require('./prisma/client');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer'); // For file uploads
-const jwt = require('jsonwebtoken'); // For JWT authentication
+const jwt = require('jsonwebtoken'); // JWT for authentication
 const path = require('path');
 require('dotenv').config();
 
@@ -20,14 +20,14 @@ const audioController = require('./src/Controller/audioController');
 // Import the SendToDeviceController
 const SendToDeviceController = require('./src/SendToDeviceController');
 
-// Repositories (assuming they are available)
+// Repositories
 const campaignInfoRepository = require('./src/Repositories/campaignInfoRepository');
 const posRepository = require('./src/Repositories/posRepository');
 const campaignRepository = require('./src/Repositories/campaignRepository');
 const audioRepository = require('./src/Repositories/audioRepository');
 
 // WebSocket behavior class
-const MyWebSocketBehavior = require('./src/MyWebSocketBehavior'); // Import the WebSocket behavior class
+const MyWebSocketBehavior = require('./src/MyWebSocketBehavior');
 const authmiddleware = require("./src/middleware/auth");
 
 // Create an Express application
@@ -35,43 +35,66 @@ const app = express();
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors({ origin: process.env.CORS_ORIGIN || '*' })); // Allow specific origin or all if not specified
-
-// Set up file upload with multer
-const upload = multer({ dest: 'uploads/' });
+app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 
 // Serve static files from /opt/qrnode/infoimage
 app.use('/images', express.static('/opt/qrnode/infoimage'));
 app.use('/audios', express.static('/opt/qrnode/audiodata'));
 
 
-// JWT authorization middleware (Placeholder)
+// Set up file upload with multer
+const upload = multer({ dest: 'uploads/' });
+
+// JWT authorization middleware
 const jwtAuthorizationFilterFactory = (req, res, next) => {
-  // Validate JWT token logic here
-  next();
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Authorization header missing' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Token missing from Authorization header' });
+  }
+
+  // Verify the JWT token
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    // Set the userId from the decoded token for further use in the request
+    req.userId = decoded.userId;
+    next();
+  });
 };
 
-// Validation middleware (Placeholder)
+// Validation middleware (Example)
 const validateModel = (req, res, next) => {
-  // Validation logic here
+  const { body } = req;
+
+  if (!body || !body.CampaignId || body.CampaignId <= 0) {
+    return res.status(400).json({ message: 'Invalid CampaignId' });
+  }
+
+  if (!body.MerchantName || body.MerchantName.trim() === "") {
+    return res.status(400).json({ message: 'MerchantName is required' });
+  }
+
   next();
 };
 
 // Create an HTTP server from the Express app
 const server = http.createServer(app);
 
-// Initialize Socket.IO with the HTTP server
-const io = new Server(server, {
-  cors: {
-    origin: process.env.SOCKET_CORS_ORIGIN || "*", // Allow all origins or define in environment
-    methods: ["GET", "POST"]
-  }
-});
+// Initialize WebSocket server (Native WebSocket)
+const wss = new WebSocket.Server({ server });
 
 const clients = new Map();
 
 // Initialize the WebSocket behavior
-const myWebSocket = new MyWebSocketBehavior(io, clients);
+const myWebSocket = new MyWebSocketBehavior(wss, clients);
 
 // Instantiate the SendToDeviceController with repositories and WebSocket behavior
 const sendToDeviceController = new SendToDeviceController(
@@ -79,7 +102,7 @@ const sendToDeviceController = new SendToDeviceController(
   campaignRepository, 
   posRepository, 
   audioRepository, 
-  myWebSocket
+  myWebSocket // Pass the WebSocket behavior instance here
 );
 
 // Use your route controllers
@@ -90,72 +113,63 @@ app.use('/api/Dashboard', DashboardController);
 app.use('/api/CampaignInfoOperation', campaigninfoController);
 app.use('/api/AudioOperation', audioController);
 
-// Define routes for SendToDevice functionality
+// Define routes for SendToDevice functionality (Preserved as per request)
 app.post('/api/SendToDevice/Campaign', validateModel, authmiddleware, (req, res) => sendToDeviceController.campaign(req, res));
 app.post('/api/SendToDevice/Separate', validateModel, jwtAuthorizationFilterFactory, upload.single('file'), (req, res) => sendToDeviceController.separate(req, res));
 app.post('/api/SendToDevice/Audio', validateModel, authmiddleware, (req, res) => sendToDeviceController.audio(req, res));
 
-io.on('connection', (socket) => {
-  const apiKey = socket.handshake.query.apiKey;
+// WebSocket connection handler
+wss.on('connection', (socket, req) => {
+  const apiKey = req.url.split('?apiKey=')[1]; // Extract the API key from the URL
   
   if (apiKey) {
-      console.log(`Client with ApiKey ${apiKey} connected`);
-      clients.set(apiKey, socket);  // Store the socket connection in the map
+    console.log(`Client with ApiKey ${apiKey} connected`);
+    clients.set(apiKey, socket);  // Store the WebSocket connection
   } else {
-      console.log('No ApiKey provided, client not stored');
+    console.log('No ApiKey provided, client not stored');
   }
 
-  // Handle messages from the client
+  // Handle incoming messages from the WebSocket
   socket.on('message', async (data) => {
-    console.log('Received message:', data); // Log the received data (it should already be an object)
-
+    console.log('Received message:', data);
+    
     try {
-      // Assuming data is already an object, no need to parse it
-      // Check if the action is 'login' and handle it
-      if (data.Action && data.Action.toLowerCase() === 'login') {
-        await myWebSocket.handleLogin(socket, data); // Call handleLogin if the action is 'login'
-      } else if (data.Action && data.Action.toLowerCase() === 'ping') {
-        await myWebSocket.handlePing(socket, data); // Call handlePing if the action is 'ping'
-      } else {
-        // Handle other actions here if needed
-        socket.emit('message', JSON.stringify({ msg: 'Unknown action' }));
-      }
+      const parsedData = JSON.parse(data); // Ensure it's valid JSON
+      await myWebSocket.onMessage(socket, parsedData); // Pass to the WebSocket handler
     } catch (error) {
       console.error('Error processing message:', error);
-      socket.emit('message', JSON.stringify({ msg: 'Error processing message' }));
+      socket.send(JSON.stringify({ msg: 'Error processing message' }));
     }
   });
 
-  // Handle client disconnection
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+  // Handle WebSocket disconnection
+  socket.on('close', () => {
+    console.log(`Client with ApiKey ${apiKey} disconnected`);
+    clients.delete(apiKey);
   });
 });
 
 // Start the main server at port 9500
 const startApp = async () => {
   try {
-    // Test the database connection
     const result = await prisma.$queryRaw`SELECT 1`;
     console.log('Database connection successful:', result);
 
-    // Start the server (both Express and WebSocket on the same port)
     const port = process.env.PORT || 9500;
     server.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
   } catch (error) {
     console.error('Error starting the app:', error);
-    process.exit(1); // Exit if critical error occurs
+    process.exit(1);
   }
 };
 
-// Graceful shutdown on process termination
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
   server.close(() => {
     console.log('HTTP server closed');
-    prisma.$disconnect(); // Disconnect from Prisma
+    prisma.$disconnect();
   });
 });
 
