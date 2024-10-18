@@ -76,7 +76,7 @@ const validateModel = (req, res, next) => {
   console.log(body)
   if (!body || body.CampaignId <= 0  || body.AudioId <= 0) {
     console.log("invalid body")
-    return res.status(400).json({ message: 'Invalid CampaignId' });
+    return res.status(400).json({ message: 'Invalid CampaignId or AudioId' });
   }
 
   if (!body.MerchantName || body.MerchantName.trim() === "") {
