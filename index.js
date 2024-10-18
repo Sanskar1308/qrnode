@@ -92,10 +92,10 @@ const server = http.createServer(app);
 // Initialize WebSocket server (Native WebSocket)
 const wss = new WebSocket.Server({ server });
 
-const clients = new Map();
+// const clients = new Map();
 
 // Initialize the WebSocket behavior
-const myWebSocket = new MyWebSocketBehavior(wss, clients);
+const myWebSocket = new MyWebSocketBehavior(wss);
 
 // Instantiate the SendToDeviceController with repositories and WebSocket behavior
 const sendToDeviceController = new SendToDeviceController(
@@ -121,14 +121,20 @@ app.post('/api/SendToDevice/Audio', validateModel, authmiddleware, (req, res) =>
 
 // WebSocket connection handler
 wss.on('connection', (socket, req) => {
-  const apiKey = req.url.split('?apiKey=')[1]; // Extract the API key from the URL
+  // const apiKey = req.url.split('?apiKey=')[1]; // Extract the API key from the URL
   
-  if (apiKey) {
-    console.log(`Client with ApiKey ${apiKey} connected`);
-    clients.set(apiKey, socket);  // Store the WebSocket connection
-  } else {
-    console.log('No ApiKey provided, client not stored');
+  // if (apiKey) {
+    try {
+      myWebSocket.handleConnection(socket); // Pass to the WebSocket handler
+  } catch (error) {
+      console.error('Error processing connection:', error);
+      socket.send(JSON.stringify({ msg: 'Error processing connection' }));
   }
+  
+    // clients.set(apiKey, socket);  // Store the WebSocket connection
+  // } else {
+  //   console.log('No ApiKey provided, client not stored');
+  // }
 
   // Handle incoming messages from the WebSocket
   socket.on('message', async (data) => {
@@ -145,8 +151,7 @@ wss.on('connection', (socket, req) => {
 
   // Handle WebSocket disconnection
   socket.on('close', () => {
-    console.log(`Client with ApiKey ${apiKey} disconnected`);
-    clients.delete(apiKey);
+    myWebSocket.onClose(socket); // Pass merchantName and posName on close
   });
 });
 
