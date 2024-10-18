@@ -10,7 +10,7 @@ const router = express.Router();
 // Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '/opt/qrcode/infoimage'); // Destination folder to store images
+        cb(null, '/opt/qrnode/infoimage'); // Destination folder to store images
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}_${file.originalname}`); // Create a unique file name
@@ -20,13 +20,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }); // Initialize multer with storage configuration
 
 // Insert API with file upload
-router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) => {
+router.post('/Insert', upload.single('file'), authmiddleware, async (req, res) => {
     try {
         const model = req.body;
         model.file = req.file;
 
+        // Check if file is uploaded
         if (!model.file) {
-            return res.status(400).json({   
+            return res.status(400).json({
                 IsResponse: false,
                 ResponseStatus: 'Error',
                 ErrorCode: 'ECC_620',
@@ -35,6 +36,7 @@ router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) =>
             });
         }
 
+        // Validate CampaignId
         if (model.CampaignId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
@@ -45,6 +47,7 @@ router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) =>
             });
         }
 
+        // Set default values for optional fields
         if (!model.Name) {
             model.Name = "";
         }
@@ -53,13 +56,15 @@ router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) =>
             model.Remark = "";
         }
 
+        // Set additional properties
         model.CreatedBy = "User";
         model.Ip = req.ip;
         model.Source = "web";
 
-        // Get UserId from headers exactly as `UserId` (case-sensitive)
+        // Extract UserId from headers (case-sensitive)
         model.UserId = parseInt(req.headers['userid'] || req.headers['user-id'], 10);
 
+        // Validate UserId
         if (isNaN(model.UserId) || model.UserId <= 0) {
             return res.status(400).json({
                 IsResponse: false,
@@ -70,16 +75,23 @@ router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) =>
             });
         }
 
-        // File path logic (already handled by multer)
+        // Handle file path logic
         const fileName = req.file.filename; // File name from multer
-        const filePath = `/opt/qrcode/infoimage/${fileName}`; // Full file path
+        const uploadDir = '/opt/qrnode/infoimage'; // Correct file path
+        const filePath = path.join(uploadDir, fileName); // Full file path
+
+        // Define the base URL of your server
+        const baseUrl = 'http://157.90.147.8:9500'; // Use your actual server URL
+
+        // Construct the full image URL
+        const fileUrl = `${baseUrl}/opt/qrnode/infoimage/${fileName}`; // URL path for accessing the image
 
         // Insert into the `campaigninfotbl` table using Prisma
         const insertResult = await prisma.campaigninfotbl.create({
             data: {
                 CampaignId: model.CampaignId,
                 FileName: fileName,
-                FilePath: filePath,
+                FilePath: fileUrl, // Store the full URL instead of just the file path
                 Active: true,
                 Name: model.Name,
                 Remark: model.Remark,
@@ -91,6 +103,7 @@ router.post('/Insert', upload.single('file'),authmiddleware, async (req, res) =>
             }
         });
 
+        // Respond with success
         res.json({
             IsResponse: true,
             ResponseStatus: 'Success',

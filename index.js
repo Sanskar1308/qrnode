@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer'); // For file uploads
 const jwt = require('jsonwebtoken'); // For JWT authentication
+const path = require('path');
 require('dotenv').config();
 
 // Import your controllers
@@ -38,6 +39,9 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || '*' })); // Allow specific ori
 
 // Set up file upload with multer
 const upload = multer({ dest: 'uploads/' });
+
+// Serve static files from /opt/qrnode/infoimage
+app.use('/images', express.static('/opt/qrnode/infoimage'));
 
 // JWT authorization middleware (Placeholder)
 const jwtAuthorizationFilterFactory = (req, res, next) => {
@@ -89,7 +93,6 @@ app.post('/api/SendToDevice/Campaign', validateModel, authmiddleware, (req, res)
 app.post('/api/SendToDevice/Separate', validateModel, jwtAuthorizationFilterFactory, upload.single('file'), (req, res) => sendToDeviceController.separate(req, res));
 app.post('/api/SendToDevice/Audio', validateModel, authmiddleware, (req, res) => sendToDeviceController.audio(req, res));
 
-
 io.on('connection', (socket) => {
   const apiKey = socket.handshake.query.apiKey;
   
@@ -110,7 +113,7 @@ io.on('connection', (socket) => {
       if (data.Action && data.Action.toLowerCase() === 'login') {
         await myWebSocket.handleLogin(socket, data); // Call handleLogin if the action is 'login'
       } else if (data.Action && data.Action.toLowerCase() === 'ping') {
-        await myWebSocket.handlePing(socket, data); // Call handleLogout if the action is 'logout'
+        await myWebSocket.handlePing(socket, data); // Call handlePing if the action is 'ping'
       } else {
         // Handle other actions here if needed
         socket.emit('message', JSON.stringify({ msg: 'Unknown action' }));
@@ -120,6 +123,7 @@ io.on('connection', (socket) => {
       socket.emit('message', JSON.stringify({ msg: 'Error processing message' }));
     }
   });
+
   // Handle client disconnection
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
